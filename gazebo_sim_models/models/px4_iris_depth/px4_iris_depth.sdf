@@ -7,12 +7,12 @@
     </include> 
 
 		<include>
-      <uri>model://r200</uri>
-			<pose>0 0 -0.05 0 1.5 0</pose>
+      <uri>model://intel_r200</uri>
+			<pose>0 0 -0.05 0 1.57 0</pose>
     </include> 
 		
 		<joint name="r200_joint" type="fixed">
-      <child>r200::link</child>
+      <child>intel_r200::r200_link</child>
       <parent>px4_iris::base_link</parent>
       <axis>
         <xyz>0 1 0</xyz>
@@ -22,6 +22,8 @@
         </limit>
       </axis>
     </joint>
+
+
 
   </model>
 </sdf>

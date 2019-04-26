@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<sdf version='1.6'>
-  <model name='px4_iris'>
+<robot name="px4_iris">
+
     <link name='base_link'>
       <pose frame=''>0 0 0 0 -0 0</pose>
       <inertial>
@@ -553,5 +553,5 @@
       <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
       <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
     </plugin>
-  </model>
-</sdf>
+
+</robot>
