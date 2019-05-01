@@ -5,7 +5,8 @@ April 2019
 """
 
 import rospy
-from geometry_msgs.msg import PoseStamped
+import math
+from geometry_msgs.msg import PoseStamped, TwistStamped
 from mavros_msgs.msg import Altitude, ExtendedState, HomePosition, State, \
                             WaypointList
 from mavros_msgs.srv import CommandBool, ParamGet, SetMode, WaypointClear, \
@@ -24,13 +25,15 @@ class Mavros_Controller(object):
         self.local_position = PoseStamped()
         self.mission_wp = WaypointList()
         self.state = State()
+        self.local_vel = TwistStamped()
+
         self.mav_type = None
 
         self.sub_topics_ready = {
             key: False
             for key in [
                 'alt', 'ext_state', 'global_pos', 'home_pos', 'local_pos',
-                'mission_wp', 'state'
+                'mission_wp', 'state', 'local_vel'
             ]
         }
 
@@ -75,6 +78,8 @@ class Mavros_Controller(object):
             'mavros/mission/waypoints', WaypointList, self.mission_wp_callback)
         self.state_sub = rospy.Subscriber('mavros/state', State,
                                           self.state_callback)
+
+        self.vel_sub = rospy.Subscriber('/mavros/local_position/velocity_local', TwistStamped, self.local_velocity_callback)
 
 
     def altitude_callback(self, data):
@@ -155,6 +160,13 @@ class Mavros_Controller(object):
         if not self.sub_topics_ready['state'] and data.connected:
             self.sub_topics_ready['state'] = True
 
+
+    def local_velocity_callback(self, data):
+
+        self.local_vel = data
+
+        if not self.sub_topics_ready['local_vel']:
+            self.sub_topics_ready['local_vel'] = True
     #
     # Helper methods
     #
@@ -184,9 +196,11 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(arm_set, (
             "failed to set arm | new arm: {0}, old arm: {1} | timeout(seconds): {2}".
             format(arm, old_arm, timeout)))
+        """
 
     def set_mode(self, mode, timeout):
         """mode: PX4 mode string, timeout(int): seconds"""
@@ -214,9 +228,11 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(mode_set, (
             "failed to set mode | new mode: {0}, old mode: {1} | timeout(seconds): {2}".
             format(mode, old_mode, timeout)))
+        """
 
     def wait_for_topics(self, timeout):
         """wait for simulation to be ready, make sure we're getting topic info
@@ -238,9 +254,11 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(simulation_ready, (
             "failed to hear from all subscribed simulation topics | topic ready flags: {0} | timeout(seconds): {1}".
             format(self.sub_topics_ready, timeout)))
+        """
 
     def wait_for_landed_state(self, desired_landed_state, timeout, index):
         rospy.loginfo("waiting for landed state | state: {0}, index: {1}".
@@ -261,12 +279,14 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(landed_state_confirmed, (
             "landed state not detected | desired: {0}, current: {1} | index: {2}, timeout(seconds): {3}".
             format(mavutil.mavlink.enums['MAV_LANDED_STATE'][
                 desired_landed_state].name, mavutil.mavlink.enums[
                     'MAV_LANDED_STATE'][self.extended_state.landed_state].name,
                    index, timeout)))
+        """
 
     def wait_for_vtol_state(self, transition, timeout, index):
         """Wait for VTOL transition, timeout(int): seconds"""
@@ -289,11 +309,13 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(transitioned, (
             "transition not detected | desired: {0}, current: {1} | index: {2} timeout(seconds): {3}".
             format(mavutil.mavlink.enums['MAV_VTOL_STATE'][transition].name,
                    mavutil.mavlink.enums['MAV_VTOL_STATE'][
                        self.extended_state.vtol_state].name, index, timeout)))
+        """
 
     def clear_wps(self, timeout):
         """timeout(int): seconds"""
@@ -319,9 +341,11 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue(wps_cleared, (
             "failed to clear waypoints | timeout(seconds): {0}".format(timeout)
         ))
+        """
 
     def send_wps(self, waypoints, timeout):
         """waypoints, timeout(int): seconds"""
@@ -358,10 +382,12 @@ class Mavros_Controller(object):
             except rospy.ROSException as e:
                 self.fail(e)
 
+        """
         self.assertTrue((
             wps_sent and wps_verified
         ), "mission could not be transferred and verified | timeout(seconds): {0}".
                         format(timeout))
+        """
 
     def wait_for_mav_type(self, timeout):
         """Wait for MAV_TYPE parameter, timeout(int): seconds"""
@@ -386,9 +412,36 @@ class Mavros_Controller(object):
                 rate.sleep()
             except rospy.ROSException as e:
                 self.fail(e)
-
+        """
         self.assertTrue(res.success, (
             "MAV_TYPE param get failed | timeout(seconds): {0}".format(timeout)
         ))
+        """
+
+    def log_topic_vars(self):
+        """log the state of topic variables"""
+        rospy.loginfo("========================")
+        rospy.loginfo("===== topic values =====")
+        rospy.loginfo("========================")
+        rospy.loginfo("altitude:\n{}".format(self.altitude))
+        rospy.loginfo("========================")
+        rospy.loginfo("extended_state:\n{}".format(self.extended_state))
+        rospy.loginfo("========================")
+        rospy.loginfo("global_position:\n{}".format(self.global_position))
+        rospy.loginfo("========================")
+        rospy.loginfo("home_position:\n{}".format(self.home_position))
+        rospy.loginfo("========================")
+        rospy.loginfo("local_position:\n{}".format(self.local_position))
+        rospy.loginfo("========================")
+        rospy.loginfo("mission_wp:\n{}".format(self.mission_wp))
+        rospy.loginfo("========================")
+        rospy.loginfo("state:\n{}".format(self.state))
+        rospy.loginfo("========================")
+
+
+
+    def assertTrue(self, var, error_info):
+        assert var, error_info
+
 
 
