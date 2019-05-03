@@ -14,6 +14,8 @@ from threading import Thread
 from tf.transformations import quaternion_from_euler
 from mavros_controller import Mavros_Controller as MController
 
+import actionlib
+import terrain_following.msg
 
 
 class Mavros_Position_Controller(MController):
@@ -31,12 +33,22 @@ class Mavros_Position_Controller(MController):
         self.pos_thread.daemon = True
         self.pos_thread.start()
 
-        service_timeout = 30
+        self._as = actionlib.SimpleActionServer("waypoints_mission", terrain_following.msg.waypointsAction,
+                                                execute_cb=self.execute_cb, auto_start=False)
+        self._as.start()
+
+    def execute_cb(self, goal):
         try:
-            rospy.wait_for_service('mavros/param/get', service_timeout)
-        except rospy.ROSException:
-            self.fail("failed to connect to services")
-        self.waypoints_srv = rospy.ServiceProxy("waypoints_mission", )
+            waypoints = np.fromstring(goal.waypoints).reshape((-1,3))
+        except:
+            rospy.logerr("Invalid waypoints")
+
+        self.__posctl(waypoints)
+
+        #feedback = terrain_following.msg.waypointsFeedback()
+        result = terrain_following.msg.waypointsResult()
+        result.success = True
+        self._as.set_succeeded(result)
 
     def send_pos(self):
         rate = rospy.Rate(10)  # Hz
@@ -106,7 +118,7 @@ class Mavros_Position_Controller(MController):
                    self.local_position.pose.position.y,
                    self.local_position.pose.position.z, timeout)))
 
-    def test_posctl(self):
+    def __posctl(self, positions):
         """Test offboard position control"""
 
         # make sure the simulation is ready to start the mission
@@ -119,8 +131,6 @@ class Mavros_Position_Controller(MController):
         self.set_arm(True, 5)
 
         rospy.loginfo("run mission")
-        positions = ((0, 0, 4), (20, 20, 4), (20, -20, 4), (-20, -20, 4),
-                     (0, 0, 4))
 
         for i in xrange(len(positions)):
             self.reach_position(positions[i][0], positions[i][1],
@@ -131,8 +141,6 @@ class Mavros_Position_Controller(MController):
                                    45, 0)
         self.set_arm(False, 5)
         rospy.loginfo("MISSION COMPLETE")
-
-
 
 
 
