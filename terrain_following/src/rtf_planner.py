@@ -23,7 +23,10 @@ class RTF_Planner(PosControl):
         self.set_mode("OFFBOARD", 5)
         self.set_arm(True, 5)
         self.reach_position(0, 0, self.height, 30)
-        self.reach_position(0, 2, self.height, 30)
+        self.reach_position(0, 10, self.height, 30)
+        self.reach_position(10, 10, self.height, 30)
+        self.reach_position(10, 0, self.height, 30)
+        self.reach_position(0, 0, self.height, 30)
 
 
 
