@@ -26,7 +26,7 @@ class Depth_Camera(object):
 
 
 
-    def estimate_terrain_vertical_distance(self, pinpoint):
+    def estimate_terrain_vertical_distance(self, pinpoint, k=3):
         """
         estimate the vertical of terrain at pintpoint
         :param pinpoint: (x,y) w.r.t global coord
@@ -47,10 +47,13 @@ class Depth_Camera(object):
 
         pinpoint = np.array(pinpoint).reshape(1, -1)
         tree = KDTree(w_points[:, :2], leaf_size=2)
-        dist, ind = tree.query(pinpoint, k=3)
+        dist, ind = tree.query(pinpoint, k=k)
         terrain_points = w_points[ind]
 
-        print(terrain_points)
+        return terrain_points.mean(axis=1)[0][-1]
+
+
+
 
     def pointcloud_callback(self, ros_cloud):
         self.ros_cloud = ros_cloud
@@ -59,7 +62,6 @@ class Depth_Camera(object):
         for data in pc2.read_points(ros_cloud, skip_nans=True):
             xyz_list.append([data[0], data[1], data[2]])
         self.points = np.array(xyz_list).astype(float)
-        self.estimate_terrain_vertical_distance((.2, .2))
 
     def xyz_array_to_pointcloud2(self, points):
         msg = PointCloud2()

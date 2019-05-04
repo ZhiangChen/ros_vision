@@ -29,7 +29,7 @@ def waypoints_client(waypoints):
 if __name__ == '__main__':
     rospy.init_node('waypoints_client', anonymous=True)
 
-    waypoints = np.array(((0, 0, 4), (0, 2, 4)))
+    waypoints = np.array(((0, 0, 4), (0, 10, 4), (0, 0, 4)))
     #waypoints = np.array([(0, x, 4 + math.sin(x)) for x in np.arange(0, 20, 0.1)])
     result = waypoints_client(waypoints.copy())
     print(result)
