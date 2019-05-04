@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../gazebo_sim_models/src/local_planner.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/src/mavros_pos_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/src/mavros_pos_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/PID.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/perception_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mavros_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mavros_pos_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_pos_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,20 +21,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mavros_controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="187" column="45" selection-start-line="187" selection-start-column="31" selection-end-line="187" selection-end-column="45" />
-              <folding>
-                <element signature="e#55#67#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="47" column="9" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
+            <state relative-caret-position="330">
+              <caret line="130" column="31" selection-start-line="130" selection-start-column="31" selection-end-line="130" selection-end-column="31" />
               <folding>
                 <element signature="e#55#67#0" expanded="true" />
               </folding>
@@ -42,10 +33,43 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/waypoints_action_client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="30" lean-forward="true" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+            <state relative-caret-position="465">
+              <caret line="31" column="48" selection-start-line="31" selection-start-column="48" selection-end-line="31" selection-end-column="48" />
               <folding>
-                <element signature="e#54#66#0" expanded="true" />
+                <element signature="e#52#64#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-225">
+              <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/perception_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="570">
+              <caret line="38" column="54" selection-start-line="38" selection-start-column="54" selection-end-line="38" selection-end-column="54" />
+              <folding>
+                <element signature="e#53#65#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/rtf_planner.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
+              <folding>
+                <element signature="e#55#67#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,6 +87,9 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>set_arming_srv</find>
+      <find>rospy.login</find>
+      <find>terrain_following</find>
+      <find>state_callback</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -71,24 +98,19 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/waypoints_action_client.py" />
+        <option value="$PROJECT_DIR$/src/PID.py" />
+        <option value="$PROJECT_DIR$/src/rtf_controller.py" />
         <option value="$PROJECT_DIR$/src/mavros_pos_controller.py" />
+        <option value="$PROJECT_DIR$/src/mavros_controller.py" />
+        <option value="$PROJECT_DIR$/src/rtf_planner.py" />
+        <option value="$PROJECT_DIR$/src/waypoints_action_client.py" />
+        <option value="$PROJECT_DIR$/src/perception_model.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/terrain_following.iml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="822" />
-    <option name="y" value="151" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="2" />
+    <option name="y" value="493" />
     <option name="width" value="1392" />
     <option name="height" value="1048" />
   </component>
@@ -118,6 +140,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
@@ -146,11 +169,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="822" y="151" width="1392" height="1048" extended-state="0" />
+    <frame x="67" y="17" width="1853" height="1062" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.10226443" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15846995" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
@@ -167,12 +190,65 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.15846995" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="1" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="2" />
+      <window_info anchor="bottom" id="Python Console" order="3" />
+      <window_info anchor="bottom" id="Message" order="4" />
+      <window_info anchor="bottom" id="Find" order="5" />
+      <window_info anchor="bottom" id="Run" order="6" />
+      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/rtf_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+          <folding>
+            <element signature="e#55#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/PID.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-225">
+          <caret line="9" selection-start-line="9" selection-end-line="9" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/mavros_controller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="187" column="45" selection-start-line="187" selection-start-column="31" selection-end-line="187" selection-end-column="45" />
+        <state relative-caret-position="330">
+          <caret line="130" column="31" selection-start-line="130" selection-start-column="31" selection-end-line="130" selection-end-column="31" />
+          <folding>
+            <element signature="e#55#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/rtf_planner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
           <folding>
             <element signature="e#55#67#0" expanded="true" />
           </folding>
@@ -181,20 +257,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/waypoints_action_client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="30" lean-forward="true" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+        <state relative-caret-position="465">
+          <caret line="31" column="48" selection-start-line="31" selection-start-column="48" selection-end-line="31" selection-end-column="48" />
           <folding>
-            <element signature="e#54#66#0" expanded="true" />
+            <element signature="e#52#64#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
+    <entry file="file://$PROJECT_DIR$/src/perception_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="47" column="9" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
+        <state relative-caret-position="570">
+          <caret line="38" column="54" selection-start-line="38" selection-start-column="54" selection-end-line="38" selection-end-column="54" />
           <folding>
-            <element signature="e#55#67#0" expanded="true" />
+            <element signature="e#53#65#0" expanded="true" />
           </folding>
         </state>
       </provider>

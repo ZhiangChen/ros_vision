@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 """
 Zhiang Chen
-April 2019
+May 2019
 """
 
 import rospy
@@ -19,11 +19,11 @@ import terrain_following.msg
 
 
 class Mavros_Position_Controller(MController):
-    def __init__(self):
+    def __init__(self, radius=0.2):
         super(Mavros_Position_Controller, self).__init__()
 
         self.pos = PoseStamped()
-        self.radius = 1
+        self.radius = radius
 
         self.pos_setpoint_pub = rospy.Publisher(
             'mavros/setpoint_position/local', PoseStamped, queue_size=1)

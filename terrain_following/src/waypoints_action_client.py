@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 """
 Zhiang Chen
-April 2019
+May 2019
 """
 
 import rospy
 import actionlib
 import terrain_following.msg
 import numpy as np
+import math
 
-def waypoints_client():
+def waypoints_client(waypoints):
     client = actionlib.SimpleActionClient("waypoints_mission", terrain_following.msg.waypointsAction)
 
-    print("waiting for action server...")
+    #print("waiting for action server...")
     client.wait_for_server()
-
-    waypoints = np.array(((0, 0, 4), (20, 20, 4), (20, -20, 4), (-20, -20, 4), (0, 0, 4)))
-
     waypoints = waypoints.astype(float).tostring()
     goal = terrain_following.msg.waypointsGoal(waypoints)
     client.send_goal(goal)
@@ -30,7 +28,10 @@ def waypoints_client():
 
 if __name__ == '__main__':
     rospy.init_node('waypoints_client', anonymous=True)
-    result = waypoints_client()
+
+    waypoints = np.array(((0, 0, 4), (0, 2, 4)))
+    #waypoints = np.array([(0, x, 4 + math.sin(x)) for x in np.arange(0, 20, 0.1)])
+    result = waypoints_client(waypoints.copy())
     print(result)
 
 
