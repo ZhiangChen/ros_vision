@@ -13,7 +13,7 @@ from mavros_msgs.srv import CommandBool, ParamGet, SetMode, WaypointClear, \
                             WaypointPush
 from pymavlink import mavutil
 from sensor_msgs.msg import NavSatFix
-
+import tf
 
 class Mavros_Controller(object):
     def __init__(self):
@@ -26,6 +26,7 @@ class Mavros_Controller(object):
         self.state = State()
         self.local_vel = TwistStamped()
 
+        self.br = tf.TransformBroadcaster()
 
         self.mav_type = None
 
@@ -121,14 +122,14 @@ class Mavros_Controller(object):
 
     def local_position_callback(self, data):
         self.local_position = data
-        """
+
         pose = data.pose
         self.br.sendTransform(
             (pose.position.x, pose.position.y, pose.position.z),
             (pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w),
             rospy.Time.now(),
             "base_link", "map")
-        """
+
 
         if not self.sub_topics_ready['local_pos']:
             self.sub_topics_ready['local_pos'] = True
