@@ -20,6 +20,7 @@ sudo pip install open3d-python
 ```
 
 ### bluefox.py
-
+extract one channel (grayscale) from a bluefox camera
 
 ### zed.py
+merge two pointclouds by Iterative Closest Point (ICP)
