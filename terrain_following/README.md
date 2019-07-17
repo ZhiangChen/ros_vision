@@ -25,5 +25,5 @@ It provides an action service client, which allows to define waypoints and then 
 5. [rtf_planner.py](./src/rtf_planner.py)  
 It inherits either mavros_pos_controller.py or mavros_vel_controller.py and overwrites some functions to update the heights of waypoints according to the perception information.
 
-6. [perception_model.py](./perception_model.py)  
+6. [perception_model.py](./src/perception_model.py)  
 It supports to process pointcloud data and get the environment representation for the planner.  
