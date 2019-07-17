@@ -7,14 +7,16 @@ April 2019
 import rospy
 import numpy as np
 import math
-from mavros_pos_controller2 import Mavros_Position_Controller as PosControl
+from mavros_pos_controller import Mavros_Position_Controller as Controller
+#from mavros_vel_controller import Mavros_Position_Controller as Controller
+
 from pymavlink import mavutil
 from perception_model import Depth_Camera
 from std_msgs.msg import Float32
 
 
 
-class RTF_Planner(PosControl):
+class RTF_Planner(Controller):
     def __init__(self, height, radius=0.4):
         super(RTF_Planner, self).__init__(radius)
         self.height = height
