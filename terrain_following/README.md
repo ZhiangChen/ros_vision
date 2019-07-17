@@ -6,6 +6,9 @@ rosrun terrain_following rtf_planner.py
 rosrun terrain_following waypoints_action_client.py
 ```
 
+![relative terrain following](./rtf.jpg)
+
+
 1. [mavros_controller.py](./src/mavros_controller.py)  
 It creates services and subscribers listening to uav states, and also provides methods of setting modes. 
 
