@@ -76,7 +76,7 @@ class Mavros_Position_Controller(MController):
                         self.local_position.pose.position.z))
         return np.linalg.norm(desired - pos) < offset
 
-    def reach_position(self, x, y, z, timeout):
+    def reach_waypoint(self, x, y, z, timeout):
         """timeout(int): seconds"""
         # set a position setpoint
         self.pos.pose.position.x = x
@@ -133,7 +133,7 @@ class Mavros_Position_Controller(MController):
         rospy.loginfo("run mission")
 
         for i in xrange(len(positions)):
-            self.reach_position(positions[i][0], positions[i][1],
+            self.reach_waypoint(positions[i][0], positions[i][1],
                                 positions[i][2], 30)
 
         self.set_mode("AUTO.LAND", 5)

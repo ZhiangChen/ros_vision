@@ -7,8 +7,8 @@ April 2019
 import rospy
 import numpy as np
 import math
-from mavros_pos_controller import Mavros_Position_Controller as Controller
-#from mavros_vel_controller import Mavros_Position_Controller as Controller
+from mavros_pos_controller import Mavros_Position_Controller as PController
+#from mavros_vel_controller import Mavros_Position_Controller as VController
 
 from pymavlink import mavutil
 from perception_model import Depth_Camera
@@ -16,16 +16,16 @@ from std_msgs.msg import Float32
 
 
 
-class RTF_Planner(Controller):
+class RTF_Planner(PController):
     def __init__(self, height, radius=0.4):
         super(RTF_Planner, self).__init__(radius)
         self.height = height
-        #self.realsense = Depth_Camera()  # bad. Do not have too many efficient subscribers
+        self.realsense = Depth_Camera()
 
         self.pub_terrain_height = rospy.Publisher("/terrain_height", Float32, queue_size=1)
 
 
-    def reach_position(self, x, y, z, timeout):
+    def reach_waypoint(self, x, y, z, timeout):
         """
         overwrite reach_position
         :param x:
@@ -35,7 +35,8 @@ class RTF_Planner(Controller):
         :return:
         """
         """timeout(int): seconds"""
-        # set a position setpoint
+        timeout = 5
+        # set a waypoint
 
         if self.local_position.pose.position.z < 1:  # takeoff first
             self.pos.pose.position.x = self.local_position.pose.position.x
@@ -67,12 +68,11 @@ class RTF_Planner(Controller):
 
             gain = direction/np.linalg.norm(direction) * self.radius * 1.9
             next_xy = current_xy + gain
-            #terrain_height = self.realsense.estimate_terrain_vertical_distance(next_xy, k=5)
-            terrain_height = 0
+
+            terrain_height = self.realsense.estimate_terrain_vertical_distance(next_xy, k=5)
 
 
             next_z = self.height + terrain_height
-            #when math.fabs(self.local_position.pose.position.z - next_z) >
 
             self.pos.pose.position.x = next_xy[0]
             self.pos.pose.position.y = next_xy[1]
@@ -80,15 +80,14 @@ class RTF_Planner(Controller):
 
             #self.pub_terrain_height.publish(next_z)
 
-            #self.wait_for_position(timeout)
-            rospy.sleep(0.1)
+            self.wait_for_position(timeout)
+
             pos = np.array((self.local_position.pose.position.x,
                             self.local_position.pose.position.y))
 
             dist = np.linalg.norm(desired_xy - pos)
 
-        #terrain_height = self.realsense.estimate_terrain_vertical_distance((self.local_position.pose.position.x, self.local_position.pose.position.y), k=5)
-        terrain_height = 0
+        terrain_height = self.realsense.estimate_terrain_vertical_distance((self.local_position.pose.position.x, self.local_position.pose.position.y), k=5)
 
         rospy.loginfo(
             "desired position | x: {0}, y: {1}| current position x: {2:.2f}, y: {3:.2f}, terrain_height: {4:.2f}".

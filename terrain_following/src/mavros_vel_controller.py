@@ -39,7 +39,7 @@ class Mavros_Position_Controller(MController):
 
     def execute_cb(self, goal):
         try:
-            waypoints = np.fromstring(goal.waypoints).reshape((-1,3))
+            waypoints = np.fromstring(goal.waypoints).reshape((-1, 3))
         except:
             rospy.logerr("Invalid waypoints")
 

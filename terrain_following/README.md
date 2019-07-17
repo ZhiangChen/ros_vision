@@ -15,7 +15,7 @@ It creates services and subscribers listening to uav states, and also provides m
 2. [mavros_pos_controller.py](./src/mavros_pos_controller.py)  
 It inherits mavros_controller.py and does the following tasks.
     - It has an action service server and a callback function to process the action. The callback function executes the waypoints, which are given in the action message, and return an action result.
-    - The waypoints reaching is done by position control, ```def reach_position(self)```.
+    - The waypoints reaching is done by position control, ```def reach_waypoint(self)```.
 
 3. [mavros_vel_controller.py](./src/mavros_vel_controller.py)  
 It inherits mavros_controller.py and does the following tasks.
