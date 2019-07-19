@@ -16,13 +16,13 @@ actionlib_msgs
   pcl_conversions
   pcl_msgs
  tf
+geometry_msgs
 )
 find_package(PCL 1.7 REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(cmake_modules REQUIRED)
-#find_package(Eigen REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
-#add_definitions(${EIGEN_DEFINITIONS})
+add_definitions(${EIGEN_DEFINITIONS})
 include_directories(${PCL_INCLUDE_DIRS})
 
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -119,8 +119,8 @@ actionlib_msgs
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES terrain_following
-  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime 
-  DEPENDS system_lib eigen
+  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs
+  DEPENDS eigen
 )
 
 ###########
@@ -133,7 +133,8 @@ include_directories(
 include
 ${catkin_INCLUDE_DIRS}
 ${PCL_INCLUDE_DIRS}
-${Eigen_INCLUDE_DIRS}
+${eigen_INCLUDE_DIRS}
+${eigen_LIBRARIES}
 
 )
 

@@ -15,14 +15,11 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "perception_model");
 	ros::NodeHandle nh;
 	Perception_Model PM(&nh, "/r200/depth/points");
-	//Perception_Model PM("/r200/depth/points");
-	//Perception_Model PM;	
-
+	
+	ros::spin();
 	while(ros::ok())
 	{
-		ros::spinOnce();
-        ROS_INFO("...");
-        ros::Duration(1).sleep();
+		ros::Duration(1).sleep();
 	}
 
 	return 0;

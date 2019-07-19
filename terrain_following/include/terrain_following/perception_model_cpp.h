@@ -22,22 +22,37 @@ SOFTWARE.*/
 #ifndef Perception_Model_H_
 #define Perception_Model_H_
 
-#include <ros/ros.h>
+#include <iostream> // for C++
+#include <fstream>
+#include <string>
 #include <math.h>
+
+#include <ros/ros.h> // for ROS
 #include <sensor_msgs/PointCloud2.h> 
 #include <sensor_msgs/Image.h>
-#include <pcl_ros/point_cloud.h> 
+#include <tf/transform_listener.h>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/TransformStamped.h>
+
+#include <pcl_ros/point_cloud.h> // for PCL
 #include <pcl/conversions.h>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl/common/common_headers.h>
-//#include <pcl-1.7/pcl/point_cloud.h>
-//#include <pcl-1.7/pcl/PCLHeader.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/filters/voxel_grid.h> 
-#include <iostream>
-#include <fstream>
-#include <string>
+#include <pcl/console/parse.h>
+#include <pcl/common/transforms.h> // required for pcl::transformPointCloud
+
+
+#include <Eigen/Eigen> //for the Eigen library
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+#include <Eigen/Eigenvalues>
 
 using namespace std;
 
@@ -45,16 +60,35 @@ class Perception_Model
 {
 public:
 	Perception_Model(ros::NodeHandle *nh, string pc_topic);
-	//Perception_Model(string pc_topic);
+	
 
 private:
 	ros::NodeHandle nh_;
 	string pc_topic_;
+	tf::TransformListener tf_listener_;
+	tf::StampedTransform tf_transform_;
+	geometry_msgs::PoseStamped pose_;
+	Eigen::Affine3d T_camera2base_;
+	Eigen::Affine3d T_base2world_;
+	Eigen::Affine3d T_camera2world_;
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_ptr_;
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclTransformed_ptr_;
+	bool pc_got_;
+	
 
 	ros::Subscriber pc_sub_;
+	ros::Subscriber pose_sub_;
 	ros::Publisher pc_pub_;
+	ros::Publisher pose_pub_;
 
-	void pcCallback(const sensor_msgs::PointCloud2ConstPtr &cloud);
+	Eigen::Affine3d Posestamped2Affine3d_(geometry_msgs::PoseStamped stPose);	
+	Eigen::Affine3d TF2Affine3d_(tf::StampedTransform sTf);
+	geometry_msgs::Pose Affine3d2Pose_(Eigen::Affine3d affine);
+	void transform_cloud_(Eigen::Affine3f A, pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud_ptr, string frame); 
+	
+
+	void pcCallback(const sensor_msgs::PointCloud2ConstPtr &cloud);	
+	void poseCallback(const geometry_msgs::PoseStamped pose);
 };
 
 #endif
