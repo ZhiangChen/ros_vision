@@ -17,6 +17,8 @@ actionlib_msgs
   pcl_msgs
  tf
 geometry_msgs
+std_msgs
+message_filters
 )
 find_package(PCL 1.7 REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -78,6 +80,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
  add_action_files(
    FILES
    waypoints.action
+	terrain.action
  )
 
 ## Generate added messages and services with any dependencies listed here
@@ -119,7 +122,7 @@ actionlib_msgs
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES terrain_following
-  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs
+  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs std_msgs message_filters
   DEPENDS eigen
 )
 

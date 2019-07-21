@@ -136,6 +136,10 @@ class Mavros_Position_Controller(MController):
             self.reach_waypoint(positions[i][0], positions[i][1],
                                 positions[i][2], 30)
 
+        #rate = rospy.Rate(1)
+        #while True:
+        #    rate.sleep()
+
         self.set_mode("AUTO.LAND", 5)
         self.wait_for_landed_state(mavutil.mavlink.MAV_LANDED_STATE_ON_GROUND,
                                    45, 0)
