@@ -72,6 +72,8 @@
 <exec_depend>std_msgs</exec_depend>
 <build_depend>message_filters</build_depend>
 <exec_depend>message_filters</exec_depend>
+<build_depend>mavros_msgs</build_depend>
+<exec_depend>mavros_msgs</exec_depend>
 
   <build_depend>pcl_ros</build_depend>
   <build_depend>pcl_conversions</build_depend>

@@ -94,6 +94,8 @@ void Perception_Model::poseCallback(const geometry_msgs::PoseStamped pose)
 	
 	if (pc_got_)
 	{
+		double t = ros::Time::now().toSec();
+		cout << endl << t << endl;
 		pose_ = pose;
 		pcl::fromROSMsg(cloud_, *pcl_ptr_);
 
@@ -111,6 +113,8 @@ void Perception_Model::poseCallback(const geometry_msgs::PoseStamped pose)
 		pc_pub_.publish(output);
 
 		Tf_got_ = true;
+		t = ros::Time::now().toSec();
+		cout << t << endl;
 	}
 
 	
@@ -146,6 +150,8 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 
 void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud, const geometry_msgs::PoseStampedConstPtr &pose)
 {
+	double t = ros::Time::now().toSec();
+	cout << endl << t << endl;
 	cloud_ = *cloud;
 	pose_ = *pose;
 	pcl::fromROSMsg(cloud_, *pcl_ptr_);
@@ -157,11 +163,14 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 	pcl::transformPointCloud(*pcl_ptr_, *pclTransformed_ptr_, A);
 	pclTransformed_ptr_->header.frame_id = "map";	
 
-	pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
+	/*pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
 	pose_pub_.publish(pose); // for debug
-	sensor_msgs::PointCloud2 output;
-	pcl::toROSMsg(*pclTransformed_ptr_, output);
-	pc_pub_.publish(output);
+	sensor_msgs::PointCloud2 output; // for debug
+	pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
+	pc_pub_.publish(output); // for debug
+	*/
+	t = ros::Time::now().toSec();
+	cout << t << endl;
 }
 
 

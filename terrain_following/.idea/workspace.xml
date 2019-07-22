@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/package.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mavros_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mavros_pos_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_pos_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/perception_model_cpp_main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp_main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +20,7 @@
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="210">
-                <caret line="14" column="63" lean-forward="true" selection-start-line="14" selection-start-column="63" selection-end-line="14" selection-end-column="63" />
+                <caret line="14" column="63" selection-start-line="14" selection-start-column="63" selection-end-line="14" selection-end-column="63" />
               </first_editor>
               <second_editor />
             </state>
@@ -35,8 +30,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/terrain_lookup_client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="27" column="60" lean-forward="true" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="60" />
+            <state relative-caret-position="360">
+              <caret line="27" column="60" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="60" />
               <folding>
                 <element signature="e#53#65#0" expanded="true" />
               </folding>
@@ -47,8 +42,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mavros_controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-583">
-              <caret line="122" column="31" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="31" />
+            <state relative-caret-position="272">
+              <caret line="273" column="21" selection-start-line="273" selection-start-column="17" selection-end-line="273" selection-end-column="21" />
               <folding>
                 <element signature="e#55#67#0" expanded="true" />
               </folding>
@@ -56,7 +51,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/waypoints_action_client.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="465">
@@ -71,7 +66,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mavros_vel_controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-855">
+            <state relative-caret-position="450">
               <caret line="41" column="67" selection-start-line="41" selection-start-column="67" selection-end-line="41" selection-end-column="67" />
             </state>
           </provider>
@@ -80,7 +75,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/perception_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
+            <state relative-caret-position="818">
               <caret line="55" column="53" selection-start-line="55" selection-start-column="53" selection-end-line="55" selection-end-column="53" />
               <folding>
                 <element signature="e#53#65#0" expanded="true" />
@@ -89,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="593">
-              <caret line="140" column="9" selection-start-line="140" selection-start-column="9" selection-end-line="140" selection-end-column="9" />
+            <state relative-caret-position="503">
+              <caret line="143" column="26" selection-start-line="143" selection-start-column="22" selection-end-line="143" selection-end-column="26" />
               <folding>
                 <element signature="e#53#65#0" expanded="true" />
               </folding>
@@ -104,8 +99,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/rtf_planner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1350">
-              <caret line="102" column="36" lean-forward="true" selection-start-line="102" selection-start-column="36" selection-end-line="102" selection-end-column="36" />
+            <state relative-caret-position="1410">
+              <caret line="102" column="36" selection-start-line="102" selection-start-column="36" selection-end-line="102" selection-end-column="36" />
               <folding>
                 <element signature="e#55#67#0" expanded="true" />
               </folding>
@@ -124,12 +119,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>set_arming_srv</find>
       <find>rospy.login</find>
       <find>terrain_following</find>
       <find>state_callback</find>
       <find>tf</find>
-      <find>mavutil</find>
       <find>pinpoint</find>
       <find>self.vel</find>
       <find>tf.</find>
@@ -142,6 +135,13 @@
       <find>reach_position</find>
       <find>vel</find>
       <find>local_position_callback</find>
+      <find>set_arming_srv</find>
+      <find>mavutil</find>
+      <find>wp_push_srv</find>
+      <find>get_param_srv</find>
+      <find>set_arm</find>
+      <find>wait_for</find>
+      <find>land</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -158,17 +158,17 @@
         <option value="$PROJECT_DIR$/src/rtf_planner.py" />
         <option value="$PROJECT_DIR$/src/perception_model.py" />
         <option value="$PROJECT_DIR$/src/terrain_lookup_client.py" />
-        <option value="$PROJECT_DIR$/src/mavros_controller.py" />
         <option value="$PROJECT_DIR$/src/mavros_pos_controller.py" />
         <option value="$PROJECT_DIR$/src/waypoints_action_client.py" />
+        <option value="$PROJECT_DIR$/src/mavros_controller.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="419" />
-    <option name="y" value="212" />
-    <option name="width" value="1388" />
-    <option name="height" value="681" />
+    <option name="x" value="67" />
+    <option name="y" value="17" />
+    <option name="width" value="926" />
+    <option name="height" value="1062" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -176,7 +176,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -193,6 +192,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -234,7 +234,7 @@
     <frame x="67" y="17" width="1853" height="1062" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1863388" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.089071035" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -287,36 +287,16 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="210">
-            <caret line="14" column="63" lean-forward="true" selection-start-line="14" selection-start-column="63" selection-end-line="14" selection-end-column="63" />
+            <caret line="14" column="63" selection-start-line="14" selection-start-column="63" selection-end-line="14" selection-end-column="63" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/rtf_planner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="102" column="36" lean-forward="true" selection-start-line="102" selection-start-column="36" selection-end-line="102" selection-end-column="36" />
-          <folding>
-            <element signature="e#55#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/perception_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="55" column="53" selection-start-line="55" selection-start-column="53" selection-end-line="55" selection-end-column="53" />
-          <folding>
-            <element signature="e#53#65#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/terrain_lookup_client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="60" lean-forward="true" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="60" />
+        <state relative-caret-position="360">
+          <caret line="27" column="60" selection-start-line="27" selection-start-column="60" selection-end-line="27" selection-end-column="60" />
           <folding>
             <element signature="e#53#65#0" expanded="true" />
           </folding>
@@ -325,27 +305,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/mavros_vel_controller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-855">
+        <state relative-caret-position="450">
           <caret line="41" column="67" selection-start-line="41" selection-start-column="67" selection-end-line="41" selection-end-column="67" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/mavros_controller.py">
+    <entry file="file://$PROJECT_DIR$/src/rtf_planner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-583">
-          <caret line="122" column="31" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="31" />
+        <state relative-caret-position="1410">
+          <caret line="102" column="36" selection-start-line="102" selection-start-column="36" selection-end-line="102" selection-end-column="36" />
           <folding>
             <element signature="e#55#67#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="593">
-          <caret line="140" column="9" selection-start-line="140" selection-start-column="9" selection-end-line="140" selection-end-column="9" />
-          <folding>
-            <element signature="e#53#65#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -356,6 +326,36 @@
           <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
           <folding>
             <element signature="e#52#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/perception_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="818">
+          <caret line="55" column="53" selection-start-line="55" selection-start-column="53" selection-end-line="55" selection-end-column="53" />
+          <folding>
+            <element signature="e#53#65#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mavros_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="273" column="21" selection-start-line="273" selection-start-column="17" selection-end-line="273" selection-end-column="21" />
+          <folding>
+            <element signature="e#55#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mavros_pos_controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="503">
+          <caret line="143" column="26" selection-start-line="143" selection-start-column="22" selection-end-line="143" selection-end-column="26" />
+          <folding>
+            <element signature="e#53#65#0" expanded="true" />
           </folding>
         </state>
       </provider>

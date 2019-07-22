@@ -19,6 +19,7 @@ actionlib_msgs
 geometry_msgs
 std_msgs
 message_filters
+mavros_msgs
 )
 find_package(PCL 1.7 REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -122,7 +123,7 @@ actionlib_msgs
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES terrain_following
-  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs std_msgs message_filters
+  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs std_msgs message_filters mavros_msgs
   DEPENDS eigen
 )
 
@@ -144,7 +145,9 @@ ${eigen_LIBRARIES}
 ## Declare a C++ library
 add_library(terrain_following
    src/perception_model_cpp.cpp
+	src/mavros_commander.cpp
 )
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -155,6 +158,7 @@ add_library(terrain_following
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(perception_model_cpp_main src/perception_model_cpp_main.cpp)
+add_executable(mavros_commander_main src/mavros_commander_main.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -168,6 +172,7 @@ add_executable(perception_model_cpp_main src/perception_model_cpp_main.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(perception_model_cpp_main terrain_following ${catkin_LIBRARIES})
+target_link_libraries(mavros_commander_main terrain_following ${catkin_LIBRARIES})
 
 #############
 ## Install ##
