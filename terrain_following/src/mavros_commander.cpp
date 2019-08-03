@@ -4,7 +4,7 @@ using namespace std;
 
 Mavros_Commander::Mavros_Commander(ros::NodeHandle *nh): nh_(*nh)
 {
-	
+
 	ros::Duration timeout = ros::Duration(5);
 	try
 	{
@@ -18,8 +18,8 @@ Mavros_Commander::Mavros_Commander(ros::NodeHandle *nh): nh_(*nh)
 	{
 		ROS_ERROR("Failed to connect services.");
 	}
-	ROS_INFO("Serviced connected.");	
-	
+	ROS_INFO("Services connected.");	
+
 
 	get_param_client_ = nh_.serviceClient<mavros_msgs::ParamGet>("mavros/param/get");
 	set_arming_client_ = nh_.serviceClient<mavros_msgs::CommandBool>("mavros/cmd/arming");
@@ -130,7 +130,7 @@ void Mavros_Commander::set_arm(bool arm, int timeout)
 		}
 		rate.sleep();
 	}
-    
+
 }
 
 void Mavros_Commander::stateCallback_(const mavros_msgs::State::ConstPtr& msg)

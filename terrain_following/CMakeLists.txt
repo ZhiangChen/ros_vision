@@ -146,6 +146,7 @@ ${eigen_LIBRARIES}
 add_library(terrain_following
    src/perception_model_cpp.cpp
 	src/mavros_commander.cpp
+    src/waypoints_vel_controller.cpp
 )
 
 
@@ -159,6 +160,7 @@ add_library(terrain_following
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(perception_model_cpp_main src/perception_model_cpp_main.cpp)
 add_executable(mavros_commander_main src/mavros_commander_main.cpp)
+add_executable(waypoints_vel_controller_main src/waypoints_vel_controller_main.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -173,6 +175,7 @@ add_executable(mavros_commander_main src/mavros_commander_main.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(perception_model_cpp_main terrain_following ${catkin_LIBRARIES})
 target_link_libraries(mavros_commander_main terrain_following ${catkin_LIBRARIES})
+target_link_libraries(waypoints_vel_controller_main terrain_following ${catkin_LIBRARIES})
 
 #############
 ## Install ##

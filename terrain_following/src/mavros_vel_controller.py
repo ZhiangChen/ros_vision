@@ -18,12 +18,23 @@ import actionlib
 import terrain_following.msg
 
 
-class Mavros_Position_Controller(MController):
-    def __init__(self, radius=0.2, K=0.3):
-        super(Mavros_Position_Controller, self).__init__()
+class Mavros_Velocity_Controller(MController):
+    def __init__(self, radius=0.2, K=0.3, step_size=0.2):
+        super(Mavros_Velocity_Controller, self).__init__()
 
         self.radius = radius
         self.K = K
+        self.step_size = step_size
+        self._takeoff = False
+
+        self._as = actionlib.SimpleActionServer("waypoints_mission", terrain_following.msg.waypointsAction,
+                                                execute_cb=self.execute_cb, auto_start=False)
+        self._as.start()
+        rospy.loginfo("waypoints_server started.")
+
+        self._perception_client = actionlib.SimpleActionClient("terrain_lookup", terrain_following.msg.terrainAction)
+        self._perception_client.wait_for_server()
+        self._goal = terrain_following.msg.terrainGoal()
 
         self.vel = TwistStamped()
         self.pos = self.local_position
@@ -33,9 +44,8 @@ class Mavros_Position_Controller(MController):
         self.vel_thread.daemon = True
         self.vel_thread.start()
 
-        self._as = actionlib.SimpleActionServer("waypoints_mission", terrain_following.msg.waypointsAction,
-                                                execute_cb=self.execute_cb, auto_start=False)
-        self._as.start()
+        rospy.loginfo("Mavros_Velocity_Controller initialized")
+
 
     def execute_cb(self, goal):
         try:
@@ -51,29 +61,79 @@ class Mavros_Position_Controller(MController):
         self._as.set_succeeded(result)
 
     def send_vel(self):
-        rate = rospy.Rate(20)  # Hz
+        Hz = 30
+        rate = rospy.Rate(Hz)  # Hz
         self.vel.header = Header()
         self.vel.header.frame_id = "base_footprint"
-        vel_max = np.ones(3)*2
-        vel_min = -np.ones(3)*2
+        vel_max = np.ones(3)*1
+        vel_min = -np.ones(3)*1
 
         while not rospy.is_shutdown():
             desire_xyz = np.array((self.pos.pose.position.x, self.pos.pose.position.y, self.pos.pose.position.z))
             current_xyz = np.array((self.local_position.pose.position.x, self.local_position.pose.position.y, self.local_position.pose.position.z))
             err = desire_xyz - current_xyz
-            vel_ = np.array((self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z))
-
-            vel = err * self.K
-            vel = np.max((vel, vel_min), axis=0)
-            vel = np.min((vel, vel_max), axis=0)
-
-            self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
-            self.vel.header.stamp = rospy.Time.now()
-            self.vel_setpoint_pub.publish(self.vel)
-            try:  # prevent garbage in console output when thread is killed
+            if not self._takeoff:
+                control_err = err
+                vel = control_err * self.K
+                vel = np.max((vel, vel_min), axis=0)
+                vel = np.min((vel, vel_max), axis=0)
+                self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
+                self.vel.header.stamp = rospy.Time.now()
+                self.vel_setpoint_pub.publish(self.vel)
                 rate.sleep()
-            except rospy.ROSInterruptException:
-                pass
+
+            elif np.linalg.norm(err) > self.radius*4:
+                xy_err = err[:2]
+                xy_step_size = xy_err/np.linalg.norm(xy_err) * self.step_size
+                next_xy = current_xyz[:2] + xy_step_size
+                next_xyz = np.append(next_xy, current_xyz[2])
+                self._goal.x, self._goal.y, self._goal.z = next_xy[0], next_xy[1], current_xyz[2]
+
+                self._perception_client.send_goal(self._goal)
+                self._perception_client.wait_for_result(rospy.Duration.from_sec(1.0 / Hz))
+                #print(self._perception_client.get_state())
+                if self._perception_client.get_state() == 3:  # 3: SUCCEED
+                    result = self._perception_client.get_result()
+                    if result is not None:
+                        next_xyz[2] = result.z
+                        print(result)
+
+                control_err = next_xyz - current_xyz
+                vel = control_err * self.K
+                vel = np.max((vel, vel_min), axis=0)
+                vel = np.min((vel, vel_max), axis=0)
+                #print(".")
+                #print(vel)
+                #print(next_xyz)
+                #print(control_err)
+
+                self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
+                self.vel.header.stamp = rospy.Time.now()
+                self.vel_setpoint_pub.publish(self.vel)
+
+            elif self.radius*4 >= np.linalg.norm(err) >= self.radius:
+                step_size = err/np.linalg.norm(err) * self.step_size
+                next_xyz = current_xyz + step_size
+                self._goal.x, self._goal.y, self._goal.z = next_xyz
+                self._perception_client.send_goal(self._goal)
+                self._perception_client.wait_for_result(rospy.Duration.from_sec(1.0/Hz))
+
+                if self._perception_client.get_state() == 3:  # 3: SUCCEED
+                    result = self._perception_client.get_result()
+                    if type(result) is not None:
+                        next_xyz[2] = result.z
+
+
+                control_err = next_xyz - current_xyz
+                vel = control_err * self.K
+                vel = np.max((vel, vel_min), axis=0)
+                vel = np.min((vel, vel_max), axis=0)
+                self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
+                self.vel.header.stamp = rospy.Time.now()
+                self.vel_setpoint_pub.publish(self.vel)
+            else:
+                rate.sleep()
+
 
     def is_at_position(self, x, y, z, offset):
         """offset: meters"""
@@ -81,16 +141,21 @@ class Mavros_Position_Controller(MController):
             "current position | x:{0:.2f}, y:{1:.2f}, z:{2:.2f}".format(
                 self.local_position.pose.position.x, self.local_position.pose.
                 position.y, self.local_position.pose.position.z))
+        if self._takeoff:
+            desired = np.array((x, y))
+            pos = np.array((self.local_position.pose.position.x,
+                            self.local_position.pose.position.y))
+        else:
+            desired = np.array((x, y, z))
+            pos = np.array((self.local_position.pose.position.x,
+                            self.local_position.pose.position.y,
+                            self.local_position.pose.position.z))
 
-        desired = np.array((x, y, z))
-        pos = np.array((self.local_position.pose.position.x,
-                        self.local_position.pose.position.y,
-                        self.local_position.pose.position.z))
         return np.linalg.norm(desired - pos) < offset
 
-    def reach_position(self, x, y, z, timeout):
+    def reach_waypoint(self, x, y, z, timeout):
         """timeout(int): seconds"""
-        # set a position setpoint
+
         self.pos.pose.position.x = x
         self.pos.pose.position.y = y
         self.pos.pose.position.z = z
@@ -144,13 +209,18 @@ class Mavros_Position_Controller(MController):
 
         rospy.loginfo("run mission")
 
+        self.relative_height = positions[0][2]
+        self._goal.relative_height = positions[0][2]
         for i in xrange(len(positions)):
-            self.reach_position(positions[i][0], positions[i][1],
-                                positions[i][2], 40)
+            if i>0:
+                self._takeoff = True
+            self.reach_waypoint(positions[i][0], positions[i][1],
+                                positions[i][2], 600)
 
         self.set_mode("AUTO.LAND", 5)
         self.wait_for_landed_state(mavutil.mavlink.MAV_LANDED_STATE_ON_GROUND,
                                    45, 0)
+        self._takeoff = False
         self.set_arm(False, 5)
         rospy.loginfo("MISSION COMPLETE")
 
@@ -158,8 +228,8 @@ class Mavros_Position_Controller(MController):
 
 
 if __name__ == '__main__':
-    rospy.init_node('pos_test_node', anonymous=True)
-    controller = Mavros_Position_Controller()
+    rospy.init_node('vel_controller_node', anonymous=True)
+    controller = Mavros_Velocity_Controller()
     try:
         rospy.spin()
     except rospy.ROSInterruptException:

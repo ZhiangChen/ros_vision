@@ -33,8 +33,7 @@ class Mavros_Controller(object):
         self.sub_topics_ready = {
             key: False
             for key in [
-                'alt', 'ext_state', 'global_pos', 'home_pos', 'local_pos',
-                'mission_wp', 'state', 'local_vel'
+                'alt', 'ext_state', 'global_pos', 'home_pos', 'local_pos', 'state', 'local_vel'
             ]
         }
 
@@ -61,25 +60,12 @@ class Mavros_Controller(object):
                                               WaypointPush)
 
         # ROS subscribers
-        self.alt_sub = rospy.Subscriber('mavros/altitude', Altitude,
-                                        self.altitude_callback)
-        self.ext_state_sub = rospy.Subscriber('mavros/extended_state',
-                                              ExtendedState,
-                                              self.extended_state_callback)
-        self.global_pos_sub = rospy.Subscriber('mavros/global_position/global',
-                                               NavSatFix,
-                                               self.global_position_callback)
-        self.home_pos_sub = rospy.Subscriber('mavros/home_position/home',
-                                             HomePosition,
-                                             self.home_position_callback)
-        self.local_pos_sub = rospy.Subscriber('mavros/local_position/pose',
-                                              PoseStamped,
-                                              self.local_position_callback)
-        self.mission_wp_sub = rospy.Subscriber(
-            'mavros/mission/waypoints', WaypointList, self.mission_wp_callback)
-        self.state_sub = rospy.Subscriber('mavros/state', State,
-                                          self.state_callback)
-
+        self.alt_sub = rospy.Subscriber('mavros/altitude', Altitude, self.altitude_callback)
+        self.ext_state_sub = rospy.Subscriber('mavros/extended_state', ExtendedState, self.extended_state_callback)
+        self.global_pos_sub = rospy.Subscriber('mavros/global_position/global', NavSatFix, self.global_position_callback)
+        self.home_pos_sub = rospy.Subscriber('mavros/home_position/home', HomePosition, self.home_position_callback)
+        self.local_pos_sub = rospy.Subscriber('mavros/local_position/pose', PoseStamped, self.local_position_callback)
+        self.state_sub = rospy.Subscriber('mavros/state', State, self.state_callback)
         self.vel_sub = rospy.Subscriber('/mavros/local_position/velocity_local', TwistStamped, self.local_velocity_callback)
 
 
@@ -123,28 +109,9 @@ class Mavros_Controller(object):
     def local_position_callback(self, data):
         self.local_position = data
 
-        """
-        pose = data.pose
-        self.br.sendTransform(
-            (pose.position.x, pose.position.y, pose.position.z),
-            (pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w),
-            rospy.Time.now(),
-            "base_link", "map")
-        """
-
-
         if not self.sub_topics_ready['local_pos']:
             self.sub_topics_ready['local_pos'] = True
 
-    def mission_wp_callback(self, data):
-        if self.mission_wp.current_seq != data.current_seq:
-            rospy.loginfo("current mission waypoint sequence updated: {0}".
-                          format(data.current_seq))
-
-        self.mission_wp = data
-
-        if not self.sub_topics_ready['mission_wp']:
-            self.sub_topics_ready['mission_wp'] = True
 
     def state_callback(self, data):
         if self.state.armed != data.armed:
