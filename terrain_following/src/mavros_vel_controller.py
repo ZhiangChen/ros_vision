@@ -22,11 +22,15 @@ class Mavros_Velocity_Controller(MController):
     def __init__(self, radius=0.2, K_xy=0.3, K_z=1, K=0.3, step_size=0.3):
         super(Mavros_Velocity_Controller, self).__init__()
 
+        # controller parameters
         self.radius = radius
-        self.K_xy = K_xy
+        self.K_I = 0.3
+        self.K_xy = 0.5 # K_xy
         self.K_z = K_z
         self.K = K
         self.step_size = step_size
+        self._xy_err_old = np.zeros(2)
+
         self._takeoff = False
 
         self._as = actionlib.SimpleActionServer("waypoints_mission", terrain_following.msg.waypointsAction,
@@ -45,6 +49,7 @@ class Mavros_Velocity_Controller(MController):
         self.vel_thread = Thread(target=self.send_vel, args=())
         self.vel_thread.daemon = True
         self.vel_thread.start()
+
 
         rospy.loginfo("Mavros_Velocity_Controller initialized")
 
@@ -67,8 +72,8 @@ class Mavros_Velocity_Controller(MController):
         rate = rospy.Rate(Hz)  # Hz
         self.vel.header = Header()
         self.vel.header.frame_id = "base_footprint"
-        vel_max = np.ones(3)*1
-        vel_min = -np.ones(3)*1
+        vel_max = np.ones(3)*0.5
+        vel_min = -np.ones(3)*0.5
 
         while not rospy.is_shutdown():
             desire_xyz = np.array((self.pos.pose.position.x, self.pos.pose.position.y, self.pos.pose.position.z))
@@ -100,17 +105,15 @@ class Mavros_Velocity_Controller(MController):
                         next_xyz[2] = result.z
                         if not result.got_terrain:
                             print(result)
-
-
-                z_err = next_xyz[2] - current_xyz[2]
-                vel = np.append(xy_step_size * self.K_xy, z_err * self.K_z)
+                z_vel = (next_xyz[2] - current_xyz[2]) * self.K_z
+                xy_vel = xy_step_size * self.K_xy + (xy_step_size + self._xy_err_old) * self.K_I
+                vel = np.append(xy_vel, z_vel)
                 vel = np.max((vel, vel_min), axis=0)
                 vel = np.min((vel, vel_max), axis=0)
-
-
                 self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
                 self.vel.header.stamp = rospy.Time.now()
                 self.vel_setpoint_pub.publish(self.vel)
+                self._xy_err_old = xy_step_size
 
             elif self.radius*4 >= np.linalg.norm(err) >= self.radius:
                 step_size = err/np.linalg.norm(err) * self.step_size
