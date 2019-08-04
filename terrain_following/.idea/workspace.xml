@@ -3,13 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/action/terrain.action" beforeDir="false" afterPath="$PROJECT_DIR$/action/terrain.action" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mavros_commander.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_commander.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mavros_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mavros_vel_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_vel_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +66,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

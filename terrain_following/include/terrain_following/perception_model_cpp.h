@@ -56,6 +56,7 @@ SOFTWARE.*/
 #include <pcl/filters/crop_box.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/common/centroid.h>
 
 
 #include <Eigen/Eigen> //for the Eigen library
@@ -94,11 +95,13 @@ protected:
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_rgbd_ptr_;
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_ptr_;
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclTransformed_ptr_;
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclTransformed_ptr_copy_;
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr boxTransformed_ptr_;
 	pcl::PassThrough<pcl::PointXYZRGB> box_filter_;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr pclTransformed_xyz_ptr_;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr boxTransformed_xyz_ptr_;
-	Eigen::Vector4f box_centroid_;
+	Eigen::Vector4f box_centroid_pcl_;
+	Eigen::Vector3f box_centroid_;
 	pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor_;
 	sensor_msgs::PointCloud2 cloud_;
 
@@ -124,6 +127,7 @@ protected:
 	geometry_msgs::Pose Affine3d2Pose_(Eigen::Affine3d affine);
 	void transform_cloud_(Eigen::Affine3f A, pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud_ptr, string frame);
 	void box_filtering_(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud_ptr, vector<int> &indices, double x, double y);
+	Eigen::Vector3f compute_centroid_(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z);
 
 	void pcCallback(const sensor_msgs::PointCloud2ConstPtr &cloud);	// callback
 	void poseCallback(const geometry_msgs::PoseStamped pose);

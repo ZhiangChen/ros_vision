@@ -19,7 +19,7 @@ import terrain_following.msg
 
 
 class Mavros_Velocity_Controller(MController):
-    def __init__(self, radius=0.2, K=0.3, step_size=0.2):
+    def __init__(self, radius=0.2, K=0.3, step_size=0.8):
         super(Mavros_Velocity_Controller, self).__init__()
 
         self.radius = radius
@@ -91,7 +91,7 @@ class Mavros_Velocity_Controller(MController):
 
                 self._perception_client.send_goal(self._goal)
                 self._perception_client.wait_for_result(rospy.Duration.from_sec(1.0 / Hz))
-                #print(self._perception_client.get_state())
+                # print(self._perception_client.get_state())
                 if self._perception_client.get_state() == 3:  # 3: SUCCEED
                     result = self._perception_client.get_result()
                     if result is not None:
@@ -102,10 +102,6 @@ class Mavros_Velocity_Controller(MController):
                 vel = control_err * self.K
                 vel = np.max((vel, vel_min), axis=0)
                 vel = np.min((vel, vel_max), axis=0)
-                #print(".")
-                #print(vel)
-                #print(next_xyz)
-                #print(control_err)
 
                 self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
                 self.vel.header.stamp = rospy.Time.now()

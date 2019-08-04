@@ -42,7 +42,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh, string pc_topic): nh_(*n
 }
 
 
-Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
+Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_copy_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
 {
 	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
     pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/posestamped", 1, true); // for debug
@@ -123,8 +123,6 @@ void Perception_Model::poseCallback(const geometry_msgs::PoseStamped pose)
 }
 
 
-
-
 void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud, const geometry_msgs::PoseStampedConstPtr &pose)
 {
 	//double t = ros::Time::now().toSec();
@@ -140,11 +138,13 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 	pcl::transformPointCloud(*pcl_ptr_, *pclTransformed_ptr_, A);
 	pclTransformed_ptr_->header.frame_id = "map";
 
+	pcl::copyPointCloud(*pclTransformed_ptr_, *pclTransformed_ptr_copy_);
+
 	pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
 	pose_pub_.publish(pose); // for debug
-	//sensor_msgs::PointCloud2 output; // for debug
-	//pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
-	//pc_pub_.publish(output); // for debug
+	sensor_msgs::PointCloud2 output; // for debug
+	pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
+	pc_pub_.publish(output); // for debug
 
 	//t = ros::Time::now().toSec();
 	//cout << t << endl;
@@ -165,7 +165,7 @@ double Perception_Model::get_terrain_height(double x, double y)
 		//box_filter_.filter(*boxTransformed_xyz_ptr_);
 		if ( boxTransformed_xyz_ptr_->size() > BOX_POINTS_THRES)
 		{
-			pcl::compute3DCentroid(*boxTransformed_xyz_ptr_, box_centroid_);
+			pcl::compute3DCentroid(*boxTransformed_xyz_ptr_, box_centroid_pcl_);
 			result_.z = box_centroid_[2];
 		}
 		return result_.z;
@@ -177,8 +177,7 @@ double Perception_Model::get_terrain_height(double x, double y)
 
 void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &goal)
 {
-	//double t = ros::Time::now().toSec();
-	//cout << endl << t << endl;
+
 	double x = goal->x;
 	double y = goal->y;
 	double z = goal->z;
@@ -186,38 +185,31 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 	if (pc_got_)
 	{
 
-		//pcl::copyPointCloud(*pclTransformed_ptr_, *pclTransformed_xyz_ptr_);
-		//sensor_msgs::PointCloud2 output; // for debug
-		//pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
-		//pc_pub_.publish(output); // for debug
-
-		//vector<int> indices; // indices of interesting pixels
-		//box_filtering_(pclTransformed_xyz_ptr_, indices, x, y);
-		//pcl::copyPointCloud(*pclTransformed_xyz_ptr_, indices, *boxTransformed_xyz_ptr_);
 		pcl::CropBox<pcl::PointXYZRGB> box_crop;
-		//box_crop.setMin(Eigen::Vector4f(x - BOX_X/2.0, y - BOX_Y/2.0, -10000, 1.0));
-		//box_crop.setMax(Eigen::Vector4f(x + BOX_X/2.0, y + BOX_Y/2.0, 10000, 1.0));
 		box_crop.setMin(Eigen::Vector4f(x - BOX_X/2.0, y - BOX_Y/2.0, -10000, 1.0));
 		box_crop.setMax(Eigen::Vector4f(x + BOX_X/2.0, y + BOX_Y/2.0, 10000, 1.0));
 		box_crop.setTranslation(no_translation_);
 		box_crop.setRotation(no_roation_);
 		//Eigen::Affine3f transform = Eigen::Affine3f::Identity();
 		//box_crop.setTransform(transform);
-		box_crop.setInputCloud(pclTransformed_ptr_);
+		box_crop.setInputCloud(pclTransformed_ptr_copy_);
 		box_crop.filter(*boxTransformed_ptr_);
 
 		if (boxTransformed_ptr_->size() > BOX_POINTS_THRES)
 		{
-			pcl::compute3DCentroid(*boxTransformed_ptr_, box_centroid_);
+
+			//cout << boxTransformed_ptr_->size() <<endl;
+			pcl::compute3DCentroid(*boxTransformed_ptr_, box_centroid_pcl_);
+			//box_centroid_ = compute_centroid_(boxTransformed_ptr_, z);
 			//cout << box_centroid_[0] <<" " << box_centroid_[1] << " " << box_centroid_[2]<<endl;
-			sensor_msgs::PointCloud2 output; // for debug
-			pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
-			pc_pub_.publish(output); // for debug
+
+			//sensor_msgs::PointCloud2 output; // for debug
+			//pcl::toROSMsg(*pclTransformed_ptr_copy_, output); // for debug
+			//pc_pub_.publish(output); // for debug
+
 			result_.z = box_centroid_[2] + relative_height;
 			result_.got_terrain = true;
 			as_.setSucceeded(result_);
-			//t = ros::Time::now().toSec();
-			//cout << t << endl;
 		}
 		else
 		{
@@ -348,4 +340,22 @@ void Perception_Model::box_filtering_(pcl::PointCloud<pcl::PointXYZ>::Ptr input_
                indices.push_back(i);
         }
     }
+}
+
+
+Eigen::Vector3f  Perception_Model::compute_centroid_(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z)
+{
+    Eigen::Vector3f centroid;
+	Eigen::Vector3f xyz;
+    int npts = input_cloud_ptr->points.size();
+    centroid<<0,0,0;
+    //add all the points together:
+
+    for (int ipt = 0; ipt < npts; ipt++)
+	{
+		xyz << input_cloud_ptr->points[ipt].x, input_cloud_ptr->points[ipt].y, input_cloud_ptr->points[ipt].z;
+        centroid += xyz; //add all the column vectors together
+    }
+    centroid/= npts; //divide by the number of points to get the centroid
+    return centroid;
 }
