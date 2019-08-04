@@ -20,6 +20,7 @@ geometry_msgs
 std_msgs
 message_filters
 mavros_msgs
+nav_msgs
 )
 find_package(PCL 1.7 REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -123,7 +124,7 @@ actionlib_msgs
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES terrain_following
-  CATKIN_DEPENDS rospy roscpp sensor_msgs message_runtime geometry_msgs std_msgs message_filters mavros_msgs
+  CATKIN_DEPENDS rospy roscpp sensor_msgs nav_msgs message_runtime geometry_msgs std_msgs message_filters mavros_msgs
   DEPENDS eigen
 )
 

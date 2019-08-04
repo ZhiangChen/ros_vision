@@ -42,6 +42,7 @@ SOFTWARE.*/
 #include <message_filters/sync_policies/approximate_time.h>
 #include <actionlib/server/simple_action_server.h> // customized ROS messages
 #include <terrain_following/terrainAction.h>
+#include <nav_msgs/Path.h>
 
 
 #include <pcl_ros/point_cloud.h> // for PCL
@@ -88,6 +89,7 @@ protected:
 	Eigen::Affine3d T_camera2base_;
 	Eigen::Affine3d T_base2world_;
 	Eigen::Affine3d T_camera2world_;
+	nav_msgs::Path g_path_;
 
 	string pc_topic_; // pointcloud
 	bool pc_got_;
@@ -117,6 +119,7 @@ protected:
 	ros::Publisher pc_pub_;
 	ros::Publisher pose_pub_;
 	actionlib::SimpleActionServer<terrain_following::terrainAction> as_;
+	ros::Publisher path_pub_;
 
 	message_filters::Subscriber<sensor_msgs::PointCloud2> *mf_pc_sub_; // message filter
 	message_filters::Subscriber<geometry_msgs::PoseStamped> *mf_pose_sub_;

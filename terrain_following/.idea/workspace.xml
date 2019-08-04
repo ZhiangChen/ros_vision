@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/models/px4_iris_depth/px4_iris_depth.sdf" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/models/px4_iris_depth/px4_iris_depth.sdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.xml" beforeDir="false" afterPath="$PROJECT_DIR$/package.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mavros_vel_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_vel_controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />

@@ -19,10 +19,12 @@ import terrain_following.msg
 
 
 class Mavros_Velocity_Controller(MController):
-    def __init__(self, radius=0.2, K=0.3, step_size=0.8):
+    def __init__(self, radius=0.2, K_xy=0.3, K_z=1, K=0.3, step_size=0.3):
         super(Mavros_Velocity_Controller, self).__init__()
 
         self.radius = radius
+        self.K_xy = K_xy
+        self.K_z = K_z
         self.K = K
         self.step_size = step_size
         self._takeoff = False
@@ -96,12 +98,15 @@ class Mavros_Velocity_Controller(MController):
                     result = self._perception_client.get_result()
                     if result is not None:
                         next_xyz[2] = result.z
-                        print(result)
+                        if not result.got_terrain:
+                            print(result)
 
-                control_err = next_xyz - current_xyz
-                vel = control_err * self.K
+
+                z_err = next_xyz[2] - current_xyz[2]
+                vel = np.append(xy_step_size * self.K_xy, z_err * self.K_z)
                 vel = np.max((vel, vel_min), axis=0)
                 vel = np.min((vel, vel_max), axis=0)
+
 
                 self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
                 self.vel.header.stamp = rospy.Time.now()

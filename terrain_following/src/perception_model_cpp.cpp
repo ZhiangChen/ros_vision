@@ -46,6 +46,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 {
 	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
     pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/posestamped", 1, true); // for debug
+	path_pub_ = nh_.advertise<nav_msgs::Path>("/terrain_following_path", 1, true);
 
 	mf_pc_sub_ = new message_filters::Subscriber<sensor_msgs::PointCloud2>(nh_, "/r200/depth/points", Queue_Size);
 	mf_pose_sub_ = new message_filters::Subscriber<geometry_msgs::PoseStamped>(nh_, "mavros/local_position/pose", Queue_Size);
@@ -76,6 +77,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	Tf_got_ = false;
 	no_translation_ << 0,0,0;
 	no_roation_ << 0,0,0;
+	g_path_.header.frame_id = "map";
 	as_.start(); //start the server running
 	ROS_INFO("action service starts.");
 
@@ -142,17 +144,21 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 
 	pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
 	pose_pub_.publish(pose); // for debug
-	sensor_msgs::PointCloud2 output; // for debug
-	pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
-	pc_pub_.publish(output); // for debug
+	//sensor_msgs::PointCloud2 output; // for debug
+	//pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
+	//pc_pub_.publish(output); // for debug
 
 	//t = ros::Time::now().toSec();
 	//cout << t << endl;
+
+	g_path_.poses.push_back(pose_);
+	path_pub_.publish(g_path_);
 	pc_got_ = true;
 }
 
 
 double Perception_Model::get_terrain_height(double x, double y)
+/// need to re-write this one
 {
 	if (pc_got_)
 	{
@@ -203,11 +209,11 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 			//box_centroid_ = compute_centroid_(boxTransformed_ptr_, z);
 			//cout << box_centroid_[0] <<" " << box_centroid_[1] << " " << box_centroid_[2]<<endl;
 
-			//sensor_msgs::PointCloud2 output; // for debug
-			//pcl::toROSMsg(*pclTransformed_ptr_copy_, output); // for debug
-			//pc_pub_.publish(output); // for debug
+			sensor_msgs::PointCloud2 output; // for debug
+			pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
+			pc_pub_.publish(output); // for debug
 
-			result_.z = box_centroid_[2] + relative_height;
+			result_.z = box_centroid_pcl_[2] + relative_height;
 			result_.got_terrain = true;
 			as_.setSucceeded(result_);
 		}
