@@ -33,6 +33,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh, string pc_topic): nh_(*n
 	ROS_INFO("tf is good.");
 	T_camera2base_ = TF2Affine3d_(tf_transform_);
 
+
 	pc_got_ = false;
 	Tf_got_ = false;
 	as_.start(); //start the server running
@@ -53,6 +54,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	pose_pc_sync_ = new message_filters::Synchronizer<PC_POSE_POLICY>(PC_POSE_POLICY(Queue_Size), *mf_pc_sub_, *mf_pose_sub_);
 	pose_pc_sync_->registerCallback(boost::bind(&Perception_Model::mfCallback, this, _1, _2));
 
+
 	ROS_INFO("checking tf from camera to base_link ...");
 	bool tf_exists = false;
 	while ((!tf_exists) && (ros::ok()))
@@ -72,6 +74,22 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	}
 	ROS_INFO("tf is good.");
 	T_camera2base_ = TF2Affine3d_(tf_transform_);
+/*
+	// trying to initialize T_camera2base_ from pose; for tuning transformation parameters
+	Eigen::Vector3d Oe;
+    Oe(0) = 0.1;
+    Oe(1) = 0;
+    Oe(2) = -0.01;
+    Eigen::Quaterniond q;
+    q.x() = -0.6743797;
+    q.y() = 0.6743797;
+    q.z() = -0.2126311;
+    q.w() = 0.2126311;
+	Eigen::Matrix3d Re(q);
+
+    T_camera2base_.linear() = Re;
+    T_camera2base_.translation() = Oe;
+*/
 
 	pc_got_ = false;
 	Tf_got_ = false;
@@ -144,9 +162,9 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 
 	pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
 	pose_pub_.publish(pose); // for debug
-	//sensor_msgs::PointCloud2 output; // for debug
-	//pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
-	//pc_pub_.publish(output); // for debug
+	sensor_msgs::PointCloud2 output; // for debug
+	pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
+	pc_pub_.publish(output); // for debug
 
 	//t = ros::Time::now().toSec();
 	//cout << t << endl;
@@ -209,9 +227,9 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 			//box_centroid_ = compute_centroid_(boxTransformed_ptr_, z);
 			//cout << box_centroid_[0] <<" " << box_centroid_[1] << " " << box_centroid_[2]<<endl;
 
-			sensor_msgs::PointCloud2 output; // for debug
-			pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
-			pc_pub_.publish(output); // for debug
+			//sensor_msgs::PointCloud2 output; // for debug
+			//pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
+			//pc_pub_.publish(output); // for debug
 
 			result_.z = box_centroid_pcl_[2] + relative_height;
 			result_.got_terrain = true;

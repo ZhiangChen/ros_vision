@@ -18,9 +18,10 @@ from mavros_controller import Mavros_Controller as MController
 import actionlib
 import terrain_following.msg
 
+TIME_OUT = 60*20
 
 class Mavros_Velocity_Controller(MController):
-    def __init__(self, radius=0.1, step_size=0.3):
+    def __init__(self, radius=0.15, step_size=0.3):
         super(Mavros_Velocity_Controller, self).__init__()
 
         # controller parameters
@@ -109,7 +110,11 @@ class Mavros_Velocity_Controller(MController):
                         self._turning_direction = 1
                     else:
                         self._turning_direction = -1
-                angle_vel_z = abs(err_angle_z * self.K_angle_P) * self._turning_direction
+                if err_angle_z < 0.1:
+                    angle_vel_z = err_angle_z * self.K_angle_P
+                else:
+                    angle_vel_z = abs(err_angle_z * self.K_angle_P) * self._turning_direction
+
                 angle_vel_z = np.max((angle_vel_z, -0.2), axis=0)
                 angle_vel_z = np.min((angle_vel_z, 0.2), axis=0)
                 self.vel.twist.angular.z = angle_vel_z
@@ -122,7 +127,6 @@ class Mavros_Velocity_Controller(MController):
                     self._adjust_head = True
                     self._turning_direction = False
                     self._xyz_err_old = np.zeros(3)
-
 
             elif np.linalg.norm(err) > self.radius*4:
                 xy_err = err[:2]
@@ -221,10 +225,10 @@ class Mavros_Velocity_Controller(MController):
                 rospy.loginfo("position reached | seconds: {0} of {1}".format(
                     i / loop_freq, timeout))
                 reached = True
-                self._adjust_head = False
-                self._old_position = np.array((self.pos.pose.position.x, self.pos.pose.position.y, self.pos.pose.position.z))
+                self._old_position = np.array((self.local_position.pose.position.x, self.local_position.pose.position.y, self.local_position.pose.position.z))
                 self._xy_err_old = np.zeros(2)
                 self._xyz_err_old = np.zeros(3)
+                self._adjust_head = False
                 break
 
             try:
@@ -258,7 +262,7 @@ class Mavros_Velocity_Controller(MController):
             if i > 0:
                 self._takeoff = True
             self.reach_waypoint(positions[i][0], positions[i][1],
-                                positions[i][2], 600)
+                                positions[i][2], TIME_OUT)
 
         self.set_mode("AUTO.LAND", 5)
         self.wait_for_landed_state(mavutil.mavlink.MAV_LANDED_STATE_ON_GROUND,
