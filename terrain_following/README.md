@@ -1,13 +1,11 @@
 # Relative Terrain Following
 
 ```
-gazebo_sim_models mavros_iris_depth.launch
-rosrun terrain_following rtf_planner.py
+gazebo_sim_models mavros_iris_boulder_terrain.launch
+rosrun terrain_following perception_model_cpp_main
+rosrun terrain_following mavros_vel_controller.py
 rosrun terrain_following waypoints_action_client.py
 ```
-
-![relative terrain following](./rtf.jpg)
-
 
 1. [mavros_controller.py](./src/mavros_controller.py)  
 It creates services and subscribers listening to uav states, and also provides methods of setting modes. 

@@ -8,29 +8,76 @@
     <!-- A ground plane -->
 
 
-    <include>
+    <!--include>
       <uri>model://uneven_ground</uri>
-    </include>
+    </include-->
 
-    <model name="bishop">
+    <!--model name="bishop">
       <pose>0 0 5  0 0 0</pose>
       <static>true</static>
       <link name="body">
         <visual name="visual">
           <geometry>
             <mesh>
-		<uri>model://worlds/model.dae</uri>
+		<uri>model://worlds/duck.dae</uri>
 	    </mesh>
           </geometry>
         </visual>
 	<collision name="collision">
             <geometry>
                 <mesh>
-                    <uri>file://worlds/model.dae</uri>
+                    <uri>file://worlds/duck.dae</uri>
                 </mesh>
             </geometry>
         </collision>
+      </link>
+    </model-->
 
+      <model name='scarp'>
+      <pose frame=''>0 0 -1000 0 -0 0</pose>
+      <static>1</static>
+      <link name='body'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://worlds/bishop.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://worlds/bishop.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
       </link>
     </model>
 

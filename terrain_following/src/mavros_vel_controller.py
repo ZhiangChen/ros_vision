@@ -35,6 +35,7 @@ class Mavros_Velocity_Controller(MController):
         self.step_size = step_size
         self._xy_err_old = np.zeros(2)
         self._xyz_err_old = np.zeros(3)
+        self._desired_angle_z_old = 0
 
         self._takeoff = False
         self._adjust_head = False
@@ -105,12 +106,22 @@ class Mavros_Velocity_Controller(MController):
                 control_err = self._old_position - current_xyz
                 vel = control_err * self.K_P + self._xyz_err_old * self.K_I
                 self.vel.twist.linear.x, self.vel.twist.linear.y, self.vel.twist.linear.z = vel[0], vel[1], vel[2]
+
+                # to get rid of singularity angle
+                if desire_angle_z - self._desired_angle_z_old > 5:
+                    desire_angle_z -= 3.14*2
+                elif desire_angle_z - self._desired_angle_z_old < -5:
+                    desire_angle_z += 3.14*2
+
+                err_angle_z = desire_angle_z - current_angle_z
+
                 if not self._turning_direction:
                     if err_angle_z > 0:
                         self._turning_direction = 1
                     else:
                         self._turning_direction = -1
-                if err_angle_z < 0.1:
+
+                if abs(err_angle_z) < 0.5:
                     angle_vel_z = err_angle_z * self.K_angle_P
                 else:
                     angle_vel_z = abs(err_angle_z * self.K_angle_P) * self._turning_direction
@@ -121,8 +132,9 @@ class Mavros_Velocity_Controller(MController):
                 self.vel.header.stamp = rospy.Time.now()
                 self.vel_setpoint_pub.publish(self.vel)
                 self._xyz_err_old = control_err
+                self._desired_angle_z_old = desire_angle_z
                 rate.sleep()
-                if abs(err_angle_z) < 0.01:
+                if abs(err_angle_z) < 0.02:
                     self.vel.twist.angular.z = 0
                     self._adjust_head = True
                     self._turning_direction = False

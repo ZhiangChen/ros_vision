@@ -61,4 +61,8 @@
 		<!--I know the tf parameters are odd but they works for pointcloud transform-->
 		<!--node pkg="tf" type="static_transform_publisher" name="r200_tf" args="0 0 -0.05 -0.7071068 0.7071068 0 0 base_link r200 100" /-->
 		<node pkg="tf" type="static_transform_publisher" name="r200_tf" args="0.1 0 -0.01 -0.6743797 0.6743797 -0.2126311 0.2126311 base_link r200 100" />
+		<!--The node below is to cover the tf ERROR between local_origin_ned and fcu-->
+		<!--The ERROR does not affect anything. I just want to shut it up-->
+		<node name ="link1_broadcaster" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 local_origin_ned fcu 10" />
+
 </launch>
