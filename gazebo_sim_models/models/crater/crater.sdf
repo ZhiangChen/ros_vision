@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+    <model name="crater">
+      <pose>0 0 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://crater/crater.dae</uri></mesh>
+          </geometry>
+        </visual>
+
+        <inertial>
+          <mass>0.05</mass>
+          <inertia>
+            <ixx>4.16666666667e-06</ixx>
+            <iyy>5.20833333333e-07</iyy>
+            <izz>3.85416666667e-06</izz>
+          </inertia>
+        </inertial>
+
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>model://crater/crater.dae</uri></mesh>
+          </geometry>
+        </collision>
+
+        <material>
+          <ambient>0.6 0.6 0.6 0.2</ambient>
+          <diffuse>0.6 0.6 0.6 0.2</diffuse>
+          <specular>0.6 0.6 0.6 0.2</specular>
+          <emissive>0.6 0.6 0.6 0.2</emissive>
+        </material>
+
+      </link>
+    </model>
+</sdf>
+
+
+<!-- vim: set et ft=xml fenc=utf-8 ff=unix sts=0 sw=2 ts=2 : -->
