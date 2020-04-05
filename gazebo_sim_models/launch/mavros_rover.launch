@@ -16,7 +16,7 @@
     <!-- vehicle model and world -->
     <arg name="est" default="ekf2"/>
     <arg name="vehicle" default="rover"/>
-    <arg name="world" default="$(find gazebo_sim_models)/worlds/empty.world"/>
+    <arg name="world" default="$(find gazebo_sim_models)/worlds/urban.world"/>
     <arg name="sdf" default="$(find gazebo_sim_models)/models/my_rover/my_rover.sdf"/>
 
     <!-- gazebo configs -->
@@ -60,7 +60,7 @@
 		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /-->
 		<!--I know the tf parameters are odd but they works for pointcloud transform-->
 		<!--node pkg="tf" type="static_transform_publisher" name="r200_tf" args="0 0 -0.05 -0.7071068 0.7071068 0 0 base_link r200 100" /-->
-		<node pkg="tf" type="static_transform_publisher" name="r200_tf" args="0.1 0 -0.01 -0.6743797 0.6743797 -0.2126311 0.2126311 base_link r200 100" />
+		<node pkg="tf" type="static_transform_publisher" name="r200_tf" args="1.5 0 1 -0.5 0.5 -0.5 0.5 base_link r200 100" />
 		<node name ="link1_broadcaster" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 local_origin_ned fcu 10" />
-		<node pkg="tf" type="static_transform_publisher" name="rtabmap_tf" args="0.1 0 -0.01 -0.6743797 0.6743797 -0.2126311 0.2126311 camera_link r200 100" />
+		<node pkg="tf" type="static_transform_publisher" name="rtabmap_tf" args="1.5 0 1 -0.5 0.5 -0.5 0.5 camera_link r200 100" />
 </launch>
