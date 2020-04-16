@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/bishop_world.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/bishop_world.launch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_depth.launch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_terrain.launch" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/launch/mavros_iris_terrain.launch" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/models/px4_iris/px4_iris.urdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/worlds/bishop.world" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/worlds/bishop.world" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/worlds/terrain.world" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/worlds/terrain.world" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rtf.rviz" beforeDir="false" afterPath="$PROJECT_DIR$/rtf.rviz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mavros_vel_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mavros_vel_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,27 +23,21 @@
   </component>
   <component name="ProjectId" id="1Or2o9BtB2SzVCbuRUxT27UJrEw" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/SES598" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -72,12 +57,11 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

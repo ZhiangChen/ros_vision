@@ -79,7 +79,6 @@ class Perception_Model
 public:
 	Perception_Model(ros::NodeHandle *nh, string pc_topic);
 	Perception_Model(ros::NodeHandle *nh);
-	double get_terrain_height(double x, double y);
 
 protected:
 	ros::NodeHandle nh_;
@@ -109,14 +108,12 @@ protected:
 
 
 	Eigen::Vector3f no_translation_;
-	Eigen::Vector3f no_roation_;
+	Eigen::Vector3f no_rotation_;
 
     terrain_following::terrainFeedback feedback_; // action
     terrain_following::terrainResult result_;
 
-	ros::Subscriber pc_sub_; // service
-	ros::Subscriber pose_sub_;
-	ros::Publisher pc_pub_;
+	ros::Publisher pc_pub_; // service
 	ros::Publisher pose_pub_;
 	actionlib::SimpleActionServer<terrain_following::terrainAction> as_;
 	ros::Publisher path_pub_;
@@ -128,12 +125,7 @@ protected:
 	Eigen::Affine3d Posestamped2Affine3d_(geometry_msgs::PoseStamped stPose); // function
 	Eigen::Affine3d TF2Affine3d_(tf::StampedTransform sTf);
 	geometry_msgs::Pose Affine3d2Pose_(Eigen::Affine3d affine);
-	void transform_cloud_(Eigen::Affine3f A, pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud_ptr, string frame);
-	void box_filtering_(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud_ptr, vector<int> &indices, double x, double y);
-	Eigen::Vector3f compute_centroid_(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z);
 
-	void pcCallback(const sensor_msgs::PointCloud2ConstPtr &cloud);	// callback
-	void poseCallback(const geometry_msgs::PoseStamped pose);
 	void executeCB(const terrain_following::terrainGoalConstPtr &goal);
 	void mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud, const geometry_msgs::PoseStampedConstPtr &pose);
 };

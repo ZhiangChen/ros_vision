@@ -5,44 +5,6 @@
 using namespace std;
 
 
-Perception_Model::Perception_Model(ros::NodeHandle *nh, string pc_topic): nh_(*nh), pc_topic_(pc_topic), pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
-{
-	pc_sub_ = nh_.subscribe(pc_topic_, 1, &Perception_Model::pcCallback, this);
-	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
-	pose_sub_ = nh_.subscribe("mavros/local_position/pose", 1, &Perception_Model::poseCallback, this);
-    pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/posestamped", 1, true); // for debug
-
-
-	ROS_INFO("checking tf from camera to base_link ...");
-	bool tf_exists = false;
-	while ((!tf_exists) && (ros::ok()))
-	{
-		tf_exists = true;
-		try
-		{
-			tf_listener_.lookupTransform("base_link", "r200", ros::Time(0), tf_transform_);
-		}
-		catch (tf::TransformException ex)
-		{
-			ROS_ERROR("%s",ex.what());
-			ros::Duration(1.0).sleep();
-			ROS_INFO("retrying ...");
-			tf_exists = false;
-		}
-	}
-	ROS_INFO("tf is good.");
-	T_camera2base_ = TF2Affine3d_(tf_transform_);
-
-
-	pc_got_ = false;
-	Tf_got_ = false;
-	as_.start(); //start the server running
-	ROS_INFO("action service starts.");
-
-	ROS_INFO("Peception Model Initialized!");
-}
-
-
 Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_copy_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
 {
 	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
@@ -94,7 +56,7 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	pc_got_ = false;
 	Tf_got_ = false;
 	no_translation_ << 0,0,0;
-	no_roation_ << 0,0,0;
+	no_rotation_ << 0,0,0;
 	g_path_.header.frame_id = "map";
 	as_.start(); //start the server running
 	ROS_INFO("action service starts.");
@@ -102,45 +64,6 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	ROS_INFO("Peception Model Initialized!");
 }
 
-
-
-void Perception_Model::pcCallback(const sensor_msgs::PointCloud2ConstPtr &cloud)
-{
-	cloud_ = *cloud;
-	pc_got_ = true;
-
-}
-
-void Perception_Model::poseCallback(const geometry_msgs::PoseStamped pose)
-{
-
-	if (pc_got_)
-	{
-		double t = ros::Time::now().toSec();
-		//cout << endl << t << endl;
-		pose_ = pose;
-		pcl::fromROSMsg(cloud_, *pcl_ptr_);
-
-		T_base2world_ = Posestamped2Affine3d_(pose_);
-		T_camera2world_ = T_base2world_ * T_camera2base_;
-		Eigen::Affine3f A = T_camera2world_.cast<float>(); // need to convert to Eigen::Affine3f, which is compatible with pointcloud assignment
-
-		pcl::transformPointCloud(*pcl_ptr_, *pclTransformed_ptr_, A);
-		pclTransformed_ptr_->header.frame_id = "map";
-
-		pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
-		pose_pub_.publish(pose); // for debug
-		sensor_msgs::PointCloud2 output;
-		pcl::toROSMsg(*pclTransformed_ptr_, output);
-		pc_pub_.publish(output);
-
-		Tf_got_ = true;
-		t = ros::Time::now().toSec();
-		//cout << t << endl;
-	}
-
-
-}
 
 
 void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud, const geometry_msgs::PoseStampedConstPtr &pose)
@@ -175,30 +98,6 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 }
 
 
-double Perception_Model::get_terrain_height(double x, double y)
-/// need to re-write this one
-{
-	if (pc_got_)
-	{
-		pcl::copyPointCloud(*pclTransformed_ptr_, *pclTransformed_xyz_ptr_);
-		//box_filter_.setInputCloud(pclTransformed_xyz_ptr_);
-		//box_filter_.setFilterFieldName ("x");
-		//box_filter_.setFilterLimits (x - BOX_X/2.0, x + BOX_X/2.0);
-		//box_filter_.setFilterFieldName ("y");
-		//box_filter_.setFilterLimits (y - BOX_Y/2.0, y + BOX_Y/2.0);
-		//box_filter_.filter(*boxTransformed_xyz_ptr_);
-		if ( boxTransformed_xyz_ptr_->size() > BOX_POINTS_THRES)
-		{
-			pcl::compute3DCentroid(*boxTransformed_xyz_ptr_, box_centroid_pcl_);
-			result_.z = box_centroid_[2];
-		}
-		return result_.z;
-	}
-	else
-		return 1e10;
-
-}
-
 void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &goal)
 {
 
@@ -213,7 +112,7 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 		box_crop.setMin(Eigen::Vector4f(x - BOX_X/2.0, y - BOX_Y/2.0, -10000, 1.0));
 		box_crop.setMax(Eigen::Vector4f(x + BOX_X/2.0, y + BOX_Y/2.0, 10000, 1.0));
 		box_crop.setTranslation(no_translation_);
-		box_crop.setRotation(no_roation_);
+		box_crop.setRotation(no_rotation_);
 		//Eigen::Affine3f transform = Eigen::Affine3f::Identity();
 		//box_crop.setTransform(transform);
 		box_crop.setInputCloud(pclTransformed_ptr_copy_);
@@ -249,12 +148,6 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 		as_.setSucceeded(result_);
 	}
 }
-
-
-
-
-
-
 
 
 Eigen::Affine3d Perception_Model::Posestamped2Affine3d_(geometry_msgs::PoseStamped stPose)
@@ -320,66 +213,5 @@ geometry_msgs::Pose Perception_Model::Affine3d2Pose_(Eigen::Affine3d affine)
     return pose;
 }
 
-// alright, this transform_cloud is inefficient
-void Perception_Model::transform_cloud_(Eigen::Affine3f A, pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud_ptr, string frame)
-{
-	output_cloud_ptr->header.frame_id = frame;
-    output_cloud_ptr->header = input_cloud_ptr->header;
-    output_cloud_ptr->is_dense = input_cloud_ptr->is_dense;
-    output_cloud_ptr->width = input_cloud_ptr->width;
-    output_cloud_ptr->height = input_cloud_ptr->height;
-    int npts = input_cloud_ptr->points.size();
-    output_cloud_ptr->points.resize(npts);
-
-    pcl::PointXYZRGB pcl_pt;
-    Eigen::Vector3f pt1, pt2;
-    for (int i = 0; i < npts; ++i)
-	{
-        pt1 = input_cloud_ptr->points[i].getVector3fMap();
-        pt2 = A * pt1;
-        pcl_pt.x = pt2(0);
-        pcl_pt.y = pt2(1);
-        pcl_pt.z = pt2(2);
-        pcl_pt.rgb = input_cloud_ptr->points[i].rgb;
-        output_cloud_ptr->points[i] = pcl_pt;
-    }
-
-}
-
-void Perception_Model::box_filtering_(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud_ptr, vector<int> &indices, double x, double y)
-{
-	int npts = input_cloud_ptr->points.size();
-    Eigen::Vector3f pt;
-    indices.clear();
-    for (int i = 0; i < npts; ++i) {
-        pt = input_cloud_ptr->points[i].getVector3fMap();
-        //cout<<"pt: "<<pt.transpose()<<endl;
-        //check if in the box:
-        if ((pt[0] > x - BOX_X/2.0 )
-		&&(pt[0] < x + BOX_X/2.0)
-		&&(pt[1] > y - BOX_Y/2.0)
-		&&(pt[1] < y + BOX_Y/2.0))
-		{
-            //passed box-crop test; include this point
-               indices.push_back(i);
-        }
-    }
-}
 
 
-Eigen::Vector3f  Perception_Model::compute_centroid_(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z)
-{
-    Eigen::Vector3f centroid;
-	Eigen::Vector3f xyz;
-    int npts = input_cloud_ptr->points.size();
-    centroid<<0,0,0;
-    //add all the points together:
-
-    for (int ipt = 0; ipt < npts; ipt++)
-	{
-		xyz << input_cloud_ptr->points[ipt].x, input_cloud_ptr->points[ipt].y, input_cloud_ptr->points[ipt].z;
-        centroid += xyz; //add all the column vectors together
-    }
-    centroid/= npts; //divide by the number of points to get the centroid
-    return centroid;
-}
