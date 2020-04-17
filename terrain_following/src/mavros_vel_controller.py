@@ -146,7 +146,7 @@ class Mavros_Velocity_Controller(MController):
                 next_xy = current_xyz[:2] + xy_step_size
                 next_xyz = np.append(next_xy, current_xyz[2])
                 self._goal.x, self._goal.y, self._goal.z = next_xy[0], next_xy[1], current_xyz[2]
-
+                self._goal.x_des, self._goal.y_des = desire_xyz[0], desire_xyz[1]
                 self._perception_client.send_goal(self._goal)
                 self._perception_client.wait_for_result(rospy.Duration.from_sec(1.0 / Hz))
                 # print(self._perception_client.get_state())
@@ -170,6 +170,7 @@ class Mavros_Velocity_Controller(MController):
                 step_size = err/np.linalg.norm(err) * self.step_size
                 next_xyz = current_xyz + step_size
                 self._goal.x, self._goal.y, self._goal.z = next_xyz
+                self._goal.x_des, self._goal.y_des = desire_xyz[0], desire_xyz[1]
                 self._perception_client.send_goal(self._goal)
                 self._perception_client.wait_for_result(rospy.Duration.from_sec(1.0/Hz))
 
@@ -255,7 +256,7 @@ class Mavros_Velocity_Controller(MController):
                    self.local_position.pose.position.z, timeout)))
 
     def __velctl(self, positions):
-        """Test offboard position control"""
+        """Test offboard velocity control"""
 
         # make sure the simulation is ready to start the mission
         self.wait_for_topics(60)

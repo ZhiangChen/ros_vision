@@ -5,7 +5,15 @@
 using namespace std;
 
 
-Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_ptr_copy_(new pcl::PointCloud<pcl::PointXYZRGB>), pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>), boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>), as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
+Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh),
+pcl_rgbd_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>),
+pcl_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>),
+pclTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>),
+pclTransformed_ptr_copy_(new pcl::PointCloud<pcl::PointXYZRGB>),
+pclTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>),
+boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>),
+boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>),
+as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
 {
 	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
     pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/posestamped", 1, true); // for debug
@@ -36,22 +44,6 @@ Perception_Model::Perception_Model(ros::NodeHandle *nh): nh_(*nh), pcl_rgbd_ptr_
 	}
 	ROS_INFO("tf is good.");
 	T_camera2base_ = TF2Affine3d_(tf_transform_);
-/*
-	// trying to initialize T_camera2base_ from pose; for tuning transformation parameters
-	Eigen::Vector3d Oe;
-    Oe(0) = 0.1;
-    Oe(1) = 0;
-    Oe(2) = -0.01;
-    Eigen::Quaterniond q;
-    q.x() = -0.6743797;
-    q.y() = 0.6743797;
-    q.z() = -0.2126311;
-    q.w() = 0.2126311;
-	Eigen::Matrix3d Re(q);
-
-    T_camera2base_.linear() = Re;
-    T_camera2base_.translation() = Oe;
-*/
 
 	pc_got_ = false;
 	Tf_got_ = false;
@@ -71,10 +63,10 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 	//double t = ros::Time::now().toSec();
 	//cout << endl << t << endl;
 	cloud_ = *cloud;
-	pose_ = *pose;
+	body_pose_ = *pose;
 	pcl::fromROSMsg(cloud_, *pcl_ptr_);
 
-	T_base2world_ = Posestamped2Affine3d_(pose_);
+	T_base2world_ = Posestamped2Affine3d_(body_pose_);
 	T_camera2world_ = T_base2world_ * T_camera2base_;
 	Eigen::Affine3f A = T_camera2world_.cast<float>(); // need to convert to Eigen::Affine3f, which is compatible with pointcloud assignment
 
@@ -83,16 +75,16 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 
 	pcl::copyPointCloud(*pclTransformed_ptr_, *pclTransformed_ptr_copy_);
 
-	pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
+	camera_pose_.pose = Affine3d2Pose_(T_camera2world_); // for debug
 	pose_pub_.publish(pose); // for debug
-	sensor_msgs::PointCloud2 output; // for debug
-	pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
-	pc_pub_.publish(output); // for debug
+	//sensor_msgs::PointCloud2 output; // for debug
+	//pcl::toROSMsg(*pclTransformed_ptr_, output); // for debug
+	//pc_pub_.publish(output); // for debug
 
 	//t = ros::Time::now().toSec();
 	//cout << t << endl;
 
-	g_path_.poses.push_back(pose_);
+	g_path_.poses.push_back(body_pose_);
 	path_pub_.publish(g_path_);
 	pc_got_ = true;
 }
@@ -105,16 +97,19 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 	double y = goal->y;
 	double z = goal->z;
 	double relative_height = goal->relative_height;
+    double x_des = goal->x_des;
+    double y_des = goal->y_des;
+
 	if (pc_got_)
 	{
-
+	    getLocalPath(x_des, y_des);
 		pcl::CropBox<pcl::PointXYZRGB> box_crop;
 		box_crop.setMin(Eigen::Vector4f(x - BOX_X/2.0, y - BOX_Y/2.0, -10000, 1.0));
 		box_crop.setMax(Eigen::Vector4f(x + BOX_X/2.0, y + BOX_Y/2.0, 10000, 1.0));
 		box_crop.setTranslation(no_translation_);
 		box_crop.setRotation(no_rotation_);
 		//Eigen::Affine3f transform = Eigen::Affine3f::Identity();
-		//box_crop.setTransform(transform);
+		//box_crop.setTransform(transform); // NEVER USE THIS! It doesn't work!
 		box_crop.setInputCloud(pclTransformed_ptr_copy_);
 		box_crop.filter(*boxTransformed_ptr_);
 
@@ -149,6 +144,59 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 	}
 }
 
+nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
+{
+    nav_msgs::Path local_path;
+
+    // get geometry
+    double x = body_pose_.pose.position.x;
+    double y = body_pose_.pose.position.y;
+    Eigen::Vector2d current_xy(x, y);
+    Eigen::Vector2d desired_xy(x_des, y_des);
+    Eigen::Vector2d dir_v(x_des - x, y_des - y);
+    double box_length = dir_v.norm();
+    double box_width = 0.1;
+    tf::Vector3 dir_vec(x_des - x, y_des - y, 0);
+    dir_vec = dir_vec.normalize();
+    tf::Vector3 x_vec(1, 0, 0);
+    double angle = dir_vec.angle(x_vec);
+
+    double dot = dir_vec[0]*1;     // dot product between [x1, y1] and [x2, y2]
+    double det = - dir_vec[1]*1;       // determinant
+    angle = -atan2(det, dot);  // atan2(y, x) or atan2(sin, cos)
+
+    // define box
+    pcl::CropBox<pcl::PointXYZRGB> box_crop;
+    box_crop.setMin(Eigen::Vector4f(0, -box_width/2.0, -10000, 1.0));
+    box_crop.setMax(Eigen::Vector4f(box_length, +box_width/2.0, 10000, 1.0));
+    //Eigen::Affine3f A = T_box2world.cast<float>();
+    //box_crop.setTransform(A);
+    Eigen::Vector3f translation(body_pose_.pose.position.x, body_pose_.pose.position.y, 0);
+	Eigen::Vector3f rotation(0, 0, angle);
+	cout << translation << " " << rotation << endl;
+    box_crop.setTranslation(translation);
+    box_crop.setRotation(rotation);
+    box_crop.setInputCloud(pclTransformed_ptr_copy_);
+
+    // get point indices in box
+    vector<int> indices_inside;
+    box_crop.filter(indices_inside);
+    cout << indices_inside.size() << endl;
+
+    if (indices_inside.size() > 10)
+    {
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr boxTransformed_ptr(new pcl::PointCloud<pcl::PointXYZRGB>);
+        box_crop.filter(*boxTransformed_ptr);
+
+        sensor_msgs::PointCloud2 output; // for debug
+        pcl::toROSMsg(*boxTransformed_ptr, output); // for debug
+        pc_pub_.publish(output); // for debug
+    }
+
+
+    return local_path;
+}
 
 Eigen::Affine3d Perception_Model::Posestamped2Affine3d_(geometry_msgs::PoseStamped stPose)
 {

@@ -31,6 +31,8 @@ SOFTWARE.*/
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/Image.h>
 #include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <tf2/LinearMath/Quaternion.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/Point.h>
@@ -84,7 +86,8 @@ protected:
 	ros::NodeHandle nh_;
 	tf::TransformListener tf_listener_; // tf
 	tf::StampedTransform tf_transform_;
-	geometry_msgs::PoseStamped pose_;
+	geometry_msgs::PoseStamped camera_pose_;
+	geometry_msgs::PoseStamped body_pose_;
 	Eigen::Affine3d T_camera2base_;
 	Eigen::Affine3d T_base2world_;
 	Eigen::Affine3d T_camera2world_;
@@ -125,6 +128,7 @@ protected:
 	Eigen::Affine3d Posestamped2Affine3d_(geometry_msgs::PoseStamped stPose); // function
 	Eigen::Affine3d TF2Affine3d_(tf::StampedTransform sTf);
 	geometry_msgs::Pose Affine3d2Pose_(Eigen::Affine3d affine);
+	nav_msgs::Path getLocalPath(double x_des, double y_des);
 
 	void executeCB(const terrain_following::terrainGoalConstPtr &goal);
 	void mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud, const geometry_msgs::PoseStampedConstPtr &pose);
