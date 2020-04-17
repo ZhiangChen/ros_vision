@@ -147,7 +147,9 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
 {
     nav_msgs::Path local_path;
-
+    /*********************************************
+    get point indices along terrain to destination
+    **********************************************/
     // get geometry
     double x = body_pose_.pose.position.x;
     double y = body_pose_.pose.position.y;
@@ -170,10 +172,9 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     box_crop.setMin(Eigen::Vector4f(0, -box_width/2.0, -10000, 1.0));
     box_crop.setMax(Eigen::Vector4f(box_length, +box_width/2.0, 10000, 1.0));
     //Eigen::Affine3f A = T_box2world.cast<float>();
-    //box_crop.setTransform(A);
+    //box_crop.setTransform(A); // This is terrible!
     Eigen::Vector3f translation(body_pose_.pose.position.x, body_pose_.pose.position.y, 0);
 	Eigen::Vector3f rotation(0, 0, angle);
-	cout << translation << " " << rotation << endl;
     box_crop.setTranslation(translation);
     box_crop.setRotation(rotation);
     box_crop.setInputCloud(pclTransformed_ptr_copy_);
@@ -183,6 +184,7 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     box_crop.filter(indices_inside);
     cout << indices_inside.size() << endl;
 
+    /*// for debug
     if (indices_inside.size() > 10)
     {
 
@@ -193,7 +195,19 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
         pcl::toROSMsg(*boxTransformed_ptr, output); // for debug
         pc_pub_.publish(output); // for debug
     }
+    */
 
+    /*********************************************
+    get normal estimation of the indices
+    **********************************************/
+
+    /*********************************************
+    generate path points
+    **********************************************/
+
+    /*********************************************
+    smooth path points
+    **********************************************/
 
     return local_path;
 }
