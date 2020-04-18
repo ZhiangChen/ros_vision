@@ -60,6 +60,7 @@ SOFTWARE.*/
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/common/centroid.h>
+#include <pcl/features/normal_3d.h>
 
 
 #include <Eigen/Eigen> //for the Eigen library
@@ -106,8 +107,6 @@ protected:
 	pcl::PointCloud<pcl::PointXYZ>::Ptr boxTransformed_xyz_ptr_;
 	Eigen::Vector4f box_centroid_pcl_;
 	Eigen::Vector3f box_centroid_;
-	pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor_;
-	sensor_msgs::PointCloud2 cloud_;
 
 
 	Eigen::Vector3f no_translation_;

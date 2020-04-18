@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

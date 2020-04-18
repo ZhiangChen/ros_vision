@@ -15,6 +15,7 @@ boxTransformed_xyz_ptr_(new pcl::PointCloud<pcl::PointXYZ>),
 boxTransformed_ptr_(new pcl::PointCloud<pcl::PointXYZRGB>),
 as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), false)
 {
+    cout << PCL_VERSION << endl;
 	pc_pub_ = nh_.advertise<sensor_msgs::PointCloud2>("/world_point_cloud", 1, true);
     pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/posestamped", 1, true); // for debug
 	path_pub_ = nh_.advertise<nav_msgs::Path>("/terrain_following_path", 1, true);
@@ -24,6 +25,8 @@ as_(*nh, "terrain_lookup", boost::bind(&Perception_Model::executeCB, this, _1), 
 	pose_pc_sync_ = new message_filters::Synchronizer<PC_POSE_POLICY>(PC_POSE_POLICY(Queue_Size), *mf_pc_sub_, *mf_pose_sub_);
 	pose_pc_sync_->registerCallback(boost::bind(&Perception_Model::mfCallback, this, _1, _2));
 
+    pclTransformed_ptr_copy_ -> is_dense = false;
+    pcl_ptr_ -> is_dense = false;
 
 	ROS_INFO("checking tf from camera to base_link ...");
 	bool tf_exists = false;
@@ -62,9 +65,17 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 {
 	//double t = ros::Time::now().toSec();
 	//cout << endl << t << endl;
-	cloud_ = *cloud;
-	body_pose_ = *pose;
-	pcl::fromROSMsg(cloud_, *pcl_ptr_);
+    body_pose_ = *pose;
+    pcl::PointCloud<pcl::PointXYZRGB> pc;
+    pc.is_dense = false;
+	pcl::fromROSMsg(*cloud, pc);
+
+	//pcl::VoxelGrid<pcl::PointXYZRGB> sor;
+    //sor.setInputCloud(pcl_ptr);
+    //sor.setLeafSize(0.01f, 0.01f, 0.01f);
+    //sor.filter(*pcl_ptr_);
+    std::vector<int> idx;
+    pcl::removeNaNFromPointCloud(pc, *pcl_ptr_, idx);
 
 	T_base2world_ = Posestamped2Affine3d_(body_pose_);
 	T_camera2world_ = T_base2world_ * T_camera2base_;
@@ -72,6 +83,7 @@ void Perception_Model::mfCallback(const sensor_msgs::PointCloud2ConstPtr &cloud,
 
 	pcl::transformPointCloud(*pcl_ptr_, *pclTransformed_ptr_, A);
 	pclTransformed_ptr_->header.frame_id = "map";
+
 
 	pcl::copyPointCloud(*pclTransformed_ptr_, *pclTransformed_ptr_copy_);
 
@@ -115,15 +127,14 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 
 		if (boxTransformed_ptr_->size() > BOX_POINTS_THRES)
 		{
-
+            //Eigen::Vector4f box_centroid_pcl;
 			//cout << boxTransformed_ptr_->size() <<endl;
 			pcl::compute3DCentroid(*boxTransformed_ptr_, box_centroid_pcl_);
-			//box_centroid_ = compute_centroid_(boxTransformed_ptr_, z);
-			//cout << box_centroid_[0] <<" " << box_centroid_[1] << " " << box_centroid_[2]<<endl;
+			//cout << box_centroid_pcl_[0] <<" " << box_centroid_pcl_[1] << " " << box_centroid_pcl_[2]<<endl;
 
-			//sensor_msgs::PointCloud2 output; // for debug
-			//pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
-			//pc_pub_.publish(output); // for debug
+			sensor_msgs::PointCloud2 output; // for debug
+			pcl::toROSMsg(*boxTransformed_ptr_, output); // for debug
+			pc_pub_.publish(output); // for debug
 
 			result_.z = box_centroid_pcl_[2] + relative_height;
 			result_.got_terrain = true;
@@ -168,28 +179,43 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     angle = -atan2(det, dot);  // atan2(y, x) or atan2(sin, cos)
 
     // define box
-    pcl::CropBox<pcl::PointXYZRGB> box_crop;
-    box_crop.setMin(Eigen::Vector4f(0, -box_width/2.0, -10000, 1.0));
-    box_crop.setMax(Eigen::Vector4f(box_length, +box_width/2.0, 10000, 1.0));
+    pcl::CropBox<pcl::PointXYZRGB> boxCrop;
+    boxCrop.setMin(Eigen::Vector4f(0, -box_width/2.0, -10000, 1.0));
+    boxCrop.setMax(Eigen::Vector4f(box_length, +box_width/2.0, 10000, 1.0));
     //Eigen::Affine3f A = T_box2world.cast<float>();
-    //box_crop.setTransform(A); // This is terrible!
+    //boxCrop.setTransform(A); // This is terrible!
     Eigen::Vector3f translation(body_pose_.pose.position.x, body_pose_.pose.position.y, 0);
 	Eigen::Vector3f rotation(0, 0, angle);
-    box_crop.setTranslation(translation);
-    box_crop.setRotation(rotation);
-    box_crop.setInputCloud(pclTransformed_ptr_copy_);
+    boxCrop.setTranslation(translation);
+    boxCrop.setRotation(rotation);
+    boxCrop.setInputCloud(pclTransformed_ptr_copy_);
 
     // get point indices in box
     vector<int> indices_inside;
-    box_crop.filter(indices_inside);
-    cout << indices_inside.size() << endl;
+    boxCrop.filter(indices_inside);
+    cout << "idx: " << indices_inside.size() << endl;
+
+    // resample indices when the amount is too large
+    vector<int> indices;
+    if (indices_inside.size() > 100)
+    {
+        random_shuffle(indices_inside.begin(), indices_inside.end());
+        indices = std::vector<int>(indices_inside.begin(), indices_inside.begin()+100);
+        indices_inside.clear();
+        indices_inside = indices;
+    }
+    /*for (int i=0; i<indices_inside.size(); i++)
+    {
+        cout<<indices_inside[i]<<", ";
+    }
+    */
 
     /*// for debug
     if (indices_inside.size() > 10)
     {
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr boxTransformed_ptr(new pcl::PointCloud<pcl::PointXYZRGB>);
-        box_crop.filter(*boxTransformed_ptr);
+        boxCrop.filter(*boxTransformed_ptr);
 
         sensor_msgs::PointCloud2 output; // for debug
         pcl::toROSMsg(*boxTransformed_ptr, output); // for debug
@@ -201,6 +227,38 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     get normal estimation of the indices
     **********************************************/
 
+    // Create the normal estimation class, and pass the input dataset to it
+    pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
+    ne.setInputCloud(pclTransformed_ptr_copy_);
+
+
+    // Pass the indices
+    boost::shared_ptr<std::vector<int>> indicesptr (new std::vector<int> (indices_inside));
+    ne.setIndices (indicesptr);
+
+    // Create an empty kdtree representation, and pass it to the normal estimation object.
+    // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB> ());
+    ne.setSearchMethod(tree);
+
+    // Output datasets
+    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>);
+    // Use all neighbors in a sphere of radius 3cm
+
+    ne.setRadiusSearch (0.3);
+
+    // Compute the features
+    ne.compute(*cloud_normals); // This API has a bug. ROS is using pcl 1.8.1
+    // the bug is fixed in pcl >= 1.8.3
+
+    /*
+    for(int i = 0; i < cloud_normals->points.size(); ++i)
+        cout << "(" << cloud_normals->at(i).normal[0]
+        << ", "    << cloud_normals->at(i).normal[1]
+         << ", "    << cloud_normals->at(i).normal[2] << ")";
+    */
+    cout<<"normal: "<< cloud_normals->points.size()<<endl;
+
     /*********************************************
     generate path points
     **********************************************/
@@ -208,6 +266,7 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     /*********************************************
     smooth path points
     **********************************************/
+
 
     return local_path;
 }
