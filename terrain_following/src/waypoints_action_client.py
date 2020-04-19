@@ -37,7 +37,7 @@ if __name__ == '__main__':
                           (0, -22, 3), (0, -24, 3 ), (-100, -24, 3 ), (0, -24, 3), (0, 0, 3 )))
     """
     #waypoints = np.array(((0, 0, 3), (-10, 0, 3), (-10, 10, 3), (0, 0, 3)))
-    waypoints = np.array(((0, 0, 3), (-6, 0, 3), (0, 0, 3)))
+    waypoints = np.array(((0, 0, 3), (6, 0, 3), (-4, 0, 3), (6, 0, 3), (-4, 0, 3), (6, 0, 3), (-4, 0, 3), (0, 0, 3)))
     #waypoints = np.array(((0, 0, 3)))
     #waypoints = np.array([(0, x, 4 + math.sin(x)) for x in np.arange(0, 20, 0.1)])
     result = waypoints_client(waypoints.copy())

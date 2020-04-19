@@ -114,6 +114,7 @@ void Perception_Model::executeCB(const terrain_following::terrainGoalConstPtr &g
 
 	if (pc_got_)
 	{
+	    pc_got_ = false;
 	    getLocalPath(x_des, y_des);
 		pcl::CropBox<pcl::PointXYZRGB> box_crop;
 		box_crop.setMin(Eigen::Vector4f(x - BOX_X/2.0, y - BOX_Y/2.0, -10000, 1.0));
@@ -195,22 +196,9 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     boxCrop.filter(indices_inside);
     cout << "idx: " << indices_inside.size() << endl;
 
-    // resample indices when the amount is too large
-    vector<int> indices;
-    if (indices_inside.size() > 100)
-    {
-        random_shuffle(indices_inside.begin(), indices_inside.end());
-        indices = std::vector<int>(indices_inside.begin(), indices_inside.begin()+100);
-        indices_inside.clear();
-        indices_inside = indices;
-    }
-    /*for (int i=0; i<indices_inside.size(); i++)
-    {
-        cout<<indices_inside[i]<<", ";
-    }
-    */
 
-    /*// for debug
+
+    // for debug
     if (indices_inside.size() > 10)
     {
 
@@ -221,12 +209,13 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
         pcl::toROSMsg(*boxTransformed_ptr, output); // for debug
         pc_pub_.publish(output); // for debug
     }
-    */
+    //*/
 
     /*********************************************
     get normal estimation of the indices
     **********************************************/
-
+    // 3D normal estimation is wrong
+    /*
     // Create the normal estimation class, and pass the input dataset to it
     pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
     ne.setInputCloud(pclTransformed_ptr_copy_);
@@ -250,6 +239,7 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
     // Compute the features
     ne.compute(*cloud_normals); // This API has a bug. ROS is using pcl 1.8.1
     // the bug is fixed in pcl >= 1.8.3
+    */
 
     /*
     for(int i = 0; i < cloud_normals->points.size(); ++i)
@@ -257,7 +247,7 @@ nav_msgs::Path Perception_Model::getLocalPath(double x_des, double y_des)
         << ", "    << cloud_normals->at(i).normal[1]
          << ", "    << cloud_normals->at(i).normal[2] << ")";
     */
-    cout<<"normal: "<< cloud_normals->points.size()<<endl;
+    //cout<<"normal: "<< cloud_normals->points.size()<<endl;
 
     /*********************************************
     generate path points

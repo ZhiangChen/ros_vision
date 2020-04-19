@@ -7,5 +7,6 @@ float64 y_des
 ---
 float64 z
 bool got_terrain
+nav_msgs/Path local_path
 ---
 float64 feedback

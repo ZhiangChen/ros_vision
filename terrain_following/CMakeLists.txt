@@ -90,6 +90,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
    DEPENDENCIES
    std_msgs  # Or other packages containing msgs
 actionlib_msgs
+nav_msgs
  )
 
 ################################################

@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/terrain_following/perception_model_cpp.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/action/terrain.action" beforeDir="false" afterPath="$PROJECT_DIR$/action/terrain.action" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/perception_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model_cpp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model_cpp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/waypoints_action_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/waypoints_action_client.py" afterDir="false" />
     </list>
@@ -64,5 +67,15 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="493" y="191" width="778" height="773" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1587249724631">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="493" y="191" width="778" height="773" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/67.27.1853.1053@67.27.1853.1053" timestamp="1587249724631" />
+    <state x="543" y="333" width="672" height="678" key="search.everywhere.popup" timestamp="1587253965528">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="543" y="333" width="672" height="678" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1587253965528" />
   </component>
 </project>
