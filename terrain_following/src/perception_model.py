@@ -92,6 +92,7 @@ class Perception_Model(object):
         self.tf_xyz = copy.deepcopy(tf_xyz)
         #tf_pc_msg = self.xyz_array_to_pointcloud2(tf_xyz, pc_msg.header.stamp, frame_id="map")
         #self.pc_pub.publish(tf_pc_msg)
+        #self.pose_pub.publish(pose_msg)
         self.state_update = True
 
 
@@ -221,22 +222,44 @@ class Perception_Model(object):
             # get 2D normal estimation of the filtered points
             normals = self.getNormals(sampled_xz_box, tf_xz_box)
             sampled_z_box = sampled_xz_box[:, 1]
+            """
             h0 = 0.5
             w1 = h0 / (h0 - sampled_z_box)
             w2 = -sampled_z_box / (h0 - sampled_z_box)
             w1 = np.asarray((w1, w1)).transpose()
             w2 = np.asarray((w2, w2)).transpose()
             dir = w1*normals + w2*np.asarray((0, 1))
+            """
             dir = 0.2 * normals + 0.8 * np.asarray((0, 1))
             path_points_xz = sampled_xz_box + dir * goal.relative_height
             path_points_xz = self.repulse(path_points_xz, tf_xz_box)
-            z = np.polyfit(path_points_xz[:, 0], path_points_xz[:, 1], 3)
-            p = np.poly1d(z)
-            local_path = path_points_xz.copy()
-            local_path[:, 1] = p(path_points_xz[:, 0])
-
             path_points_xyz = np.insert(path_points_xz, 1, 0, axis=1)
 
+            local_path = path_points_xz.copy()
+            z = np.polyfit(local_path[:, 0], local_path[:, 1], 7)
+            p = np.poly1d(z)
+            local_path[:, 0] = np.sort(local_path[:, 0])
+            local_path[:, 1] = p(local_path[:, 0])
+
+            """
+            # curve fitting in polar coordinates
+            path_points_xz_polar = np.asarray([self.cart2pol(x, y) for x, y in path_points_xz])
+            z = np.polyfit(path_points_xz_polar[:, 0], path_points_xz_polar[:, 1], 7)
+            p = np.poly1d(z)
+            path_points_xz_polar[:, 0] = np.sort(path_points_xz_polar[:, 0])
+            path_points_xz_polar[:, 1] = p(path_points_xz_polar[:, 0])
+            local_path = np.asarray([self.pol2cart(rho, phi) for rho, phi in path_points_xz_polar])
+            """
+            local_path = np.insert(local_path, 1, 0, axis=1)
+
+            points = np.insert(local_path, 3, 1, axis=1)
+            local_path = np.matmul(points, T_box2world.transpose())[:, :3]
+
+            points = np.insert(path_points_xyz, 3, 1, axis=1)
+            path_points_xyz = np.matmul(points, T_box2world.transpose())[:, :3]
+
+            points = np.insert(tf_xyz_box, 3, 1, axis=1)
+            tf_xyz_box = np.matmul(points, T_box2world.transpose())[:, :3]
 
             # set all normals pointing toward drone
             # bug: RANSAC might be wrong; maybe smooth first and then compute normals
@@ -268,7 +291,7 @@ class Perception_Model(object):
             #self.pp_pub.publish(tf_path_points_msg)
             #print(time.time() - t1)
             print(time.time() - t1)
-            path = self.points_to_path(path_points_xyz)
+            path = self.points_to_path(local_path)
             self.local_path_pub.publish(path)
             tf_path_points_msg = self.xyz_array_to_pointcloud2(path_points_xyz, frame_id="map")
             self.pp_pub.publish(tf_path_points_msg)
@@ -532,6 +555,16 @@ class Perception_Model(object):
         path.header.frame_id = 'map'
 
         return path
+
+    def cart2pol(self, x, y):
+        rho = np.sqrt(x ** 2 + y ** 2)
+        phi = np.arctan2(y, x)
+        return (phi, rho)
+
+    def pol2cart(self, phi, rho):
+        x = rho * np.cos(phi)
+        y = rho * np.sin(phi)
+        return (x, y)
 
 if __name__ == "__main__":
     rospy.init_node("perception_model", anonymous=False)
