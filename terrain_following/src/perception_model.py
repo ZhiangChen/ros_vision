@@ -50,7 +50,7 @@ class Perception_Model(object):
         else:
             trans_vec = (0.1, 0, - 0.01)
             trans = tf.transformations.translation_matrix(trans_vec)
-            quaternion = (-0.6743797, 0.6743797, - 0.2126311, 0.2126311)
+            quaternion = (-0.67437972,  0.67437972, -0.21263111,  0.21263111)
             rot = tf.transformations.quaternion_matrix(quaternion)
 
         self.T_camera2base = np.matmul(trans, rot)
@@ -90,9 +90,9 @@ class Perception_Model(object):
         points = np.insert(xyz, 3, 1, axis=1)
         tf_xyz = np.matmul(points, self.T_camera2world.transpose())[:, :3]
         self.tf_xyz = copy.deepcopy(tf_xyz)
-        #tf_pc_msg = self.xyz_array_to_pointcloud2(tf_xyz, pc_msg.header.stamp, frame_id="map")
-        #self.pc_pub.publish(tf_pc_msg)
-        #self.pose_pub.publish(pose_msg)
+        tf_pc_msg = self.xyz_array_to_pointcloud2(tf_xyz, pc_msg.header.stamp, frame_id="map")
+        self.pc_pub.publish(tf_pc_msg)
+        self.pose_pub.publish(pose_msg)
         self.state_update = True
 
 

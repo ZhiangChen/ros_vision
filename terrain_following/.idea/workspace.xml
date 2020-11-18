@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="377f97eb-ef8b-4cd4-9b16-2cf2e0447bad" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/rviz/terrain_following.rviz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/worlds/boulder-field.world" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/worlds/boulder-field.world" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../gazebo_sim_models/worlds/terrain_boulder.world" beforeDir="false" afterPath="$PROJECT_DIR$/../gazebo_sim_models/worlds/terrain_boulder.world" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rtf.rviz" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/perception_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/perception_model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

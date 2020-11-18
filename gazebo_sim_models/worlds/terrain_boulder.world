@@ -450,25 +450,25 @@
       </link>
     </model>
     <state world_name='default'>
-      <sim_time>907 948000000</sim_time>
-      <real_time>909 351745638</real_time>
-      <wall_time>1573715999 81729112</wall_time>
-      <iterations>226987</iterations>
+      <sim_time>1321 380000000</sim_time>
+      <real_time>89 431683180</real_time>
+      <wall_time>1590283073 246534900</wall_time>
+      <iterations>22329</iterations>
       <model name='boulder'>
-        <pose frame=''>-7.66952 -6.5281 0.703163 1.05264 -0 0</pose>
+        <pose frame=''>-6.22058 -5.70706 0.703163 1.05264 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='body'>
-          <pose frame=''>-7.66952 -6.5281 0.703163 1.05264 -0 0</pose>
+          <pose frame=''>-6.22058 -5.70706 0.703163 1.05264 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='boulder_0'>
-        <pose frame=''>-13.1051 -12.0208 0.337389 0.859223 -0 0</pose>
+        <pose frame=''>-14.5098 -14.5677 0.169682 -0.024042 0 0</pose>
         <scale>1 1 1</scale>
         <link name='body'>
-          <pose frame=''>-13.1051 -12.0208 0.337389 0.859223 -0 0</pose>
+          <pose frame=''>-14.5098 -14.5677 0.169682 -0.024042 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -540,7 +540,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-34.1047 -7.20456 125.669 0 1.52853 -2.13087</pose>
+        <pose frame=''>-34.6945 -13.6998 15.3483 -0 0.621797 0.133111</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

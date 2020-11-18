@@ -88,6 +88,14 @@
         </surface>
       </collision>
     </link>
+	<gazebo reference="main">
+		<material>simple_terrain</material>
+		<mu1>0.59</mu1>
+		<mu2>0.6</mu2>
+		<minDepth>0.0001</minDepth>
+		<maxContacts>10</maxContacts>
+	</gazebo>
+
     <static>1</static>
     <allow_auto_disable>1</allow_auto_disable>
   </model>

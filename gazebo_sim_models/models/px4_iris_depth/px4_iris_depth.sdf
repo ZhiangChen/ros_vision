@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <sdf version='1.6'>
-  <model name='px4_iris_stereo'>
+  <model name='px4_iris_depth'>
 
     <include>
-      <uri>model://px4_iris</uri>
+      <uri>model://iris</uri>
     </include> 
 
 	<include>
@@ -14,7 +14,7 @@
 		
 		<joint name="r200_joint" type="fixed">
       <child>intel_r200::r200_link</child>
-      <parent>px4_iris::base_link</parent>
+      <parent>iris::base_link</parent>
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
@@ -24,7 +24,16 @@
       </axis>
     </joint>
 
-
+	<plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+	  <alwaysOn>true</alwaysOn>
+	  <updateRate>50.0</updateRate>
+	  <bodyName>iris::base_link</bodyName>
+	  <topicName>/gazebo/odom</topicName>
+	  <gaussianNoise>0.0</gaussianNoise>
+	  <frameName>map</frameName>
+	  <xyzOffsets>0 0 0</xyzOffsets>
+	  <rpyOffsets>0 0 0</rpyOffsets>
+	</plugin>
 
   </model>
 </sdf>
