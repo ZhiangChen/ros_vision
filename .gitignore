@@ -1,4 +1,5 @@
-gazebo_sim_models/models/granite*
+gazebo_sim_models/models/granite_dell_pbr/*.dae
+gazebo_sim_models/models/granite_dell_terrain/*.dae
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
